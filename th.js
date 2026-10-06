@@ -90,7 +90,7 @@ function thMenu(){
   const t=T(),total=Array.from({length:150},(_,i)=>i+1).filter(chRead).length;
   const opts=Array.from({length:150},(_,i)=>'<option value="'+(i+1)+'">מזמור '+heb(i+1)+(chRead(i+1)?' ✓':'')+'</option>').join('');
   let h='';
-  if(t.cur){h+='<div class="minires"><button data-th="resume">▶ המשך מהמקום האחרון: מזמור '+heb(t.cur.seq[t.cur.i].c)+'</button></div>'}
+  if(t.cur&&!t.resumeHide){h+='<div class="minires"><button data-th="resume">▶ המשך מהמקום האחרון: מזמור '+heb(t.cur.seq[t.cur.i].c)+'</button><button class="mx" data-th="resumeX" aria-label="סגירה">✕</button></div>'}
   h+='<div class="thq"><input type="text" id="thIn" list="thDl" placeholder="חיפוש מזמורים מהיר" autocomplete="off"><button class="btn" id="thGo">פתיחה</button></div>'+
      '<select id="thSel"><option value="">בחירת מזמור מהרשימה…</option>'+opts+'</select>'+
      '<div class="thp"><div class="thpb"><i style="width:'+(total/150*100)+'%"></i></div><span>'+(total?'קראת '+hn(total)+' מתוך ק״נ':'עוד אין מזמורים מסומנים')+'</span>'+(total?'<button class="btn sec" id="thReset" style="padding:8px 12px;font-size:13px">איפוס</button>':'')+'</div>'+
@@ -103,7 +103,7 @@ function thStartRead(items,i,label,opts){const t=T();t.cur={seq:items,i:i,label:
 function thRead(){
   const t=T(),cu=t.cur;if(!cu){thPop();return}
   const it=cu.seq[cu.i],c=it.c,f=it.f||1,vs=window.TEHILLIM[c-1],to=it.t||vs.length;
-  t.last={c:c};t.inRead=true;S.lastAct={t:'th'};save();
+  t.last={c:c};t.inRead=true;t.resumeHide=false;S.lastAct={t:'th'};save();
   $('#ttl').textContent='מזמור '+heb(c);
   const text=vs.slice(f-1,to).map((v,i)=>'<span class="tv">'+hebPlain(f+i)+'</span>'+esc(v)).join(' ');
   let extra='';
@@ -205,6 +205,7 @@ document.addEventListener('click',async e=>{
   if(!thOpen&&!e.target.closest('#ovTh'))return;
   const t=e.target.closest('button');if(!t)return;
   const d=t.dataset,id=t.id;
+  if(d.th==='resumeX'){T().resumeHide=true;save();thMenu();return}
   if(d.th==='resume'){thNav({v:'read'});return}
   if(d.p){thUI.open=thUI.open===d.p?null:d.p;thUI.sub=null;thUI.ctx=null;thMenu();return}
   if(d.sub){const k=d.sub,n=+k.slice(1);
