@@ -309,9 +309,9 @@ function renderHome(){
     if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
   if(S.marks.length){h+='<h2 class="sec">הסימניות שלי</h2><div class="chips">'+
     S.marks.map((m,i)=>`<button class="chip star" data-m="${i}">★ ${esc(m.label)}</button>`).join('')+'</div>'}
-  const MAIN_ORDER=['bsh','shach','mincha','arvit','bentch','TH','chatzot'];
+  const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','bentch','mayin','chatzot'];
   h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+MAIN_ORDER.map(id=>id==='TH'?'<button class="card" data-th="open"><b>תהילים</b></button>':(book(id)?`<button class="card" data-b="${id}"><b>${esc(book(id).name)}</b></button>`:'')).join('')+'</div>';
-  h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b></button>`).join('')+'</div>';
+  h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more&&!MAIN_ORDER.includes(b.id)).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b></button>`).join('')+'</div>';
   $('#home').innerHTML=h;
 }
 $('#home').addEventListener('click',e=>{
