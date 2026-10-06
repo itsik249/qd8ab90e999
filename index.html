@@ -176,6 +176,7 @@ function openBook(id,k,para,fresh){
     const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
     const tog=(t,tight)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
     if(cp)h+=tog(p.he).replace('<div class="ph sm col">','<div class="ph sm col" id="p'+p.k+'">');
+    else if(D[p.si].parts[p.pi].noHead)h+=`<div id="p${p.k}"></div>`;
     else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
     D[p.si].parts[p.pi].paras.forEach((t,i)=>{
       const bs=blocks.find(x=>x.from===i);if(bs)h+=tog(bs.title,bs.tight);
@@ -244,7 +245,7 @@ $('#bJump').onclick=()=>{
   const mk=S.marks.map((m,i)=>({m,i})).filter(x=>x.m.book===cur.id);
   if(mk.length){h+='<div class="li g">★ הסימניות שלי</div>'+mk.map(x=>`<div class="li" data-mk="${x.i}"><span class="t">★ ${esc(x.m.label)}</span></div>`).join('')}
   let lg=null;
-  b.parts.forEach(p=>{if(p.grp&&p.grp!==lg){h+=`<div class="li g">${esc(p.grp)}</div>`;lg=p.grp}
+  b.parts.forEach(p=>{if(D[p.si].parts[p.pi].noHead)return;if(p.grp&&p.grp!==lg){h+=`<div class="li g">${esc(p.grp)}</div>`;lg=p.grp}
     h+=`<div class="li" data-pk="${p.k}"><span class="t">${esc(p.he)}</span></div>`});
   $('#shJump').innerHTML=h;$('#ovJump').classList.add('on')};
 $('#shJump').addEventListener('click',e=>{const t=e.target.closest('.li');if(!t)return;
