@@ -4,6 +4,8 @@ const TH_WEEK=[['יום ראשון',1,29],['יום שני',30,50],['יום של�
 const TH_MONTH=[[1,9],[10,17],[18,22],[23,28],[29,34],[35,38],[39,43],[44,48],[49,54],[55,59],[60,65],[66,68],[69,71],[72,76],[77,78],[79,82],[83,87],[88,89],[90,96],[97,103],[104,105],[106,107],[108,112],[113,118],[119,1,96],[119,97,176],[120,134],[135,139],[140,144],[145,150]];
 const MNAMES={1:'תשרי',2:'חשוון',3:'כסלו',4:'טבת',5:'שבט',6:'אדר א׳',7:'אדר',8:'ניסן',9:'אייר',10:'סיוון',11:'תמוז',12:'אב',13:'אלול'};
 const MKEY={Tishri:1,Heshvan:2,Kislev:3,Tevet:4,Shevat:5,'Adar I':6,Adar:7,'Adar II':7,Nisan:8,Iyar:9,Sivan:10,Tamuz:11,Av:12,Elul:13};
+/* מתג: קישור "להסבר קצר" בחלון תאריך הלידה. כבוי לבקשת יצחק. ראה PROJECT.md */
+const SHOW_BIRTH_HELP=false;
 let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null},thGoingHome=false;
 function thBackBtn(show){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
   const lbl='↩ חזרה לרשימת המזמורים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
@@ -174,7 +176,7 @@ async function thBirthDialog(){
       '<div class="d3"><label><span>יום</span><input id="gd" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>חודש</span><input id="gm" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>שנה</span><input id="gy" type="text" inputmode="numeric" maxlength="4" autocomplete="off"></label></div>'+
-      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה?</span></label><button type="button" class="chkl" id="gHelp">להסבר קצר</button><div class="chkx hide" id="gHelpBox">היום העברי מתחיל בשקיעה. מי שנולד/ה <b>בין השקיעה לחצות</b> נספר/ת ליום העברי הבא, ולכן מסמנים. מי שנולד/ה לפני השקיעה או אחרי חצות לא מסמנים, כי התאריך הלועזי כבר מראה את היום העברי הנכון.</div>'+
+      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה?</span></label>'+(SHOW_BIRTH_HELP?'<button type="button" class="chkl" id="gHelp">להסבר קצר</button><div class="chkx hide" id="gHelpBox">היום העברי מתחיל בשקיעה. מי שנולד/ה <b>בין השקיעה לחצות</b> נספר/ת ליום העברי הבא, ולכן מסמנים. מי שנולד/ה לפני השקיעה או אחרי חצות לא מסמנים, כי התאריך הלועזי כבר מראה את היום העברי הנכון.</div>':'')+
       '<button class="btn dconv" id="gConv" type="button">המרה לתאריך עברי</button><div class="dres" id="gRes"></div></div>';
   const v=await dlg({title:'תאריך לידה עברי',ok:'שמירה',noEnter:true,noFocus:true,body:body,
     onMount:root=>{
@@ -188,7 +190,7 @@ async function thBirthDialog(){
         if(q('#by').value!==String(p.y)){say('השנה מחוץ לטווח הרשימה',true);return false}
         say('✓ '+fmtBirth({d:p.d,k:p.k,y:p.y})+(sun?' (נספר כיום הבא)':''));return true};
       q('#gSun').onchange=()=>conv(false);
-      q('#gHelp').onclick=()=>q('#gHelpBox').classList.toggle('hide');
+      if(SHOW_BIRTH_HELP)q('#gHelp').onclick=()=>q('#gHelpBox').classList.toggle('hide');
       gd.oninput=()=>{gd.value=gd.value.replace(/\D/g,'');if(gd.value.length===2)gm.focus()};
       gm.oninput=()=>{gm.value=gm.value.replace(/\D/g,'');if(gm.value.length===2||(gm.value.length===1&&+gm.value>1))gy.focus()};
       gy.oninput=()=>{gy.value=gy.value.replace(/\D/g,'');if(gy.value.length===4)conv(false)};
