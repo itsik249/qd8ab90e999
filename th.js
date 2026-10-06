@@ -174,7 +174,7 @@ async function thBirthDialog(){
       '<div class="d3"><label><span>יום</span><input id="gd" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>חודש</span><input id="gm" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>שנה</span><input id="gy" type="text" inputmode="numeric" maxlength="4" autocomplete="off"></label></div>'+
-      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה (ועד חצות)</span></label>'+
+      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה</span></label><div class="chkn">נולד/ה אחרי חצות? אין צורך לסמן.</div>'+
       '<button class="btn dconv" id="gConv" type="button">המרה לתאריך עברי</button><div class="dres" id="gRes"></div></div>';
   const v=await dlg({title:'תאריך לידה עברי',ok:'שמירה',noEnter:true,noFocus:true,body:body,
     onMount:root=>{
