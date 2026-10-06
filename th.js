@@ -164,13 +164,16 @@ async function thSaveAge(){const cu=T().cur,b=T().birth;
   if(!v)return;T().lists.push({n:v.n.trim()||'מזמור לפי גיל',items:[{c:cu.seq[0].c}],dyn:!!b});save();toast('נשמר במזמורים אישיים ✓')}
 async function thBirthDialog(){
   const b=T().birth||{},now=hebParts(new Date());
-  const days=Array.from({length:30},(_,i)=>[i+1,hebPlain(i+1)]),months=Object.entries(MNAMES).map(([k,n])=>[k,k==='7'?'אדר / אדר ב׳':n]),
-        years=Array.from({length:111},(_,i)=>[now.y-i,heb((now.y-i)%1000)]);
+  const days=[['','בחירת יום']].concat(Array.from({length:30},(_,i)=>[i+1,heb(i+1)])),
+        months=[['','בחירת חודש']].concat(Object.entries(MNAMES).map(([k,n])=>[k,k==='7'?'אדר / אדר ב׳':n])),
+        years=[['','בחירת שנה']].concat(Array.from({length:111},(_,i)=>[now.y-i,heb((now.y-i)%1000)]));
   const v=await dlg({title:'תאריך לידה עברי',msg:'בכל יום הולדת עברי המזמור יתעדכן אוטומטית.',ok:'שמירה',
-    fields:[{id:'d',label:'יום',type:'select',options:days,value:b.d||1},{id:'m',label:'חודש',type:'select',options:months,value:b.k||1},{id:'y',label:'שנה',type:'select',options:years,value:b.y||now.y-30},
-            {id:'g',label:'אין תאריך עברי? אפשר להקליד תאריך לידה לועזי והוא יתמלא לבד',type:'date'}],
+    fields:[{id:'d',label:'יום',type:'select',options:days,value:b.d||''},{id:'m',label:'חודש',type:'select',options:months,value:b.k||''},{id:'y',label:'שנה',type:'select',options:years,value:b.y||''},
+            {id:'g',cls:'big',label:'לא יודע/ת את התאריך העברי שלך? אפשר להקליד את הלועזי וזה יתמלא לבד.',type:'date'}],
     onMount:root=>{root.querySelector('#df_g').onchange=e=>{const val=e.target.value;if(!val)return;const p=hebParts(new Date(val+'T12:00:00'));
-      root.querySelector('#df_d').value=p.d;root.querySelector('#df_m').value=p.k;root.querySelector('#df_y').value=p.y}}});
+      root.querySelector('#df_d').value=p.d;root.querySelector('#df_m').value=p.k;root.querySelector('#df_y').value=p.y}},
+    collect:root=>{const d=root.querySelector('#df_d').value,m=root.querySelector('#df_m').value,y=root.querySelector('#df_y').value;
+      if(!d||!m||!y){toast('יש לבחור יום, חודש ושנה');return false}return {d:d,m:m,y:y}}});
   if(!v)return false;T().birth={d:+v.d,k:+v.m,y:+v.y};T().birthNo=false;save();return true}
 
 /* ---- אירועים ---- */

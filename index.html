@@ -157,6 +157,10 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .dlgov{align-items:center;justify-content:center;padding:16px;background:rgba(30,15,5,.5);backdrop-filter:blur(3px)}
 .dlgov.on{display:flex}
 .dlg{width:min(94vw,400px);max-height:88vh;overflow:auto;background:var(--card);color:var(--fg);border-radius:22px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.dlg select,.dlg input{font-size:17px;padding:13px;border-radius:12px}
+.df.big{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.df.big>span{font-size:15px;line-height:1.5;color:var(--fg);margin-bottom:8px}
+.df.big input{font-size:19px;padding:16px;min-height:58px}
 .dlg h3{margin:0 0 6px;font-size:19px;color:var(--brown)}
 .dlg .dm{margin:6px 0 14px;color:var(--mut);line-height:1.5}
 .df{display:block;margin:10px 0}.df>span{display:block;font-size:13px;color:var(--mut);margin-bottom:4px}
@@ -220,7 +224,7 @@ const save=()=>{try{localStorage.setItem('siddur',JSON.stringify(S))}catch(e){}}
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
-  const fl=(o.fields||[]).map(f=>'<label class="df"><span>'+esc(f.label||'')+'</span>'+(f.type==='select'?'<select id="df_'+f.id+'">'+f.options.map(x=>'<option value="'+esc(x[0])+'"'+(String(x[0])===String(f.value)?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>':'<input id="df_'+f.id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'" placeholder="'+esc(f.placeholder||'')+'">')+'</label>').join('');
+  const fl=(o.fields||[]).map(f=>'<label class="df'+(f.cls?' '+f.cls:'')+'"><span>'+esc(f.label||'')+'</span>'+(f.type==='select'?'<select id="df_'+f.id+'">'+f.options.map(x=>'<option value="'+esc(x[0])+'"'+(String(x[0])===String(f.value)?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>':'<input id="df_'+f.id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'" placeholder="'+esc(f.placeholder||'')+'">')+'</label>').join('');
   box.innerHTML=(o.title?'<h3>'+esc(o.title)+'</h3>':'')+(o.msg?'<p class="dm">'+esc(o.msg)+'</p>':'')+fl+(o.body||'')+
     '<div class="dbtns">'+(o.cancel===false?'':'<button class="btn sec" id="dlgNo">'+esc(o.cancel||'ביטול')+'</button>')+'<button class="btn'+(o.danger?' del':'')+'" id="dlgOk">'+esc(o.ok||'אישור')+'</button></div>';
   ov.classList.add('on');if(o.onMount)o.onMount(box);
