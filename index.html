@@ -296,7 +296,7 @@ function openBook(id,k,para,fresh){
   b.parts.forEach(p=>{
     if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp"><span class="st">✦</span>${esc(p.grp.replace('לימי החול','לימות החול'))}<span class="st">✦</span></div>`;lastGrp=p.grp}
     const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, big=!!D[p.si].colAll, cp=big||COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
-    const tog=(t,tight,lg)=>`<div class="ph ${lg?'col lg':'sm col'}"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
+    const tog=(t,tight,lg)=>`<div class="ph ${lg?'col lg':'sm col'}"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגירה</button></div>';
     if(cp)h+=tog(p.he,false,big).replace(/^<div class="ph ([^"]*)">/,(m,c)=>'<div class="ph '+c+'" id="p'+p.k+'">');
     else if(D[p.si].parts[p.pi].noHead)h+=`<div id="p${p.k}"></div>`;
     else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
@@ -350,8 +350,8 @@ $('#bMark').onclick=()=>{
   $('#shMark').innerHTML=`<h3>סימנייה חדשה</h3>
    <p style="color:var(--mut);margin:0 0 10px">${esc(part.he)} — ${esc(snippet)}…</p>
    <input type="text" id="mkLabel" value="${esc(ex>=0?S.marks[ex].label:part.he)}">
-   <div class="row"><button class="btn grow" id="mkSave">שמור סימנייה</button>
-   ${ex>=0?'<button class="btn del" id="mkDel">מחק</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
+   <div class="row"><button class="btn grow" id="mkSave">שמירת סימנייה</button>
+   ${ex>=0?'<button class="btn del" id="mkDel">מחיקה</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
    <p style="color:var(--mut);font-size:13px">טיפ: לחיצה על פסקה מסמנת אותה, ואז ★ שומר בדיוק את המקום הזה. בלי סימון תישמר הפסקה שבראש המסך.</p>`;
   $('#ovMark').classList.add('on');
   $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
@@ -389,14 +389,14 @@ $('#bSet').onclick=()=>{
   S.marks.forEach((m,i)=>{const b=book(m.book);h+=`<div class="li"><span class="t">${esc(m.label)}<br><small style="color:var(--mut)">${esc(b?b.name:'')}</small></span>
     <button class="btn sec" data-up="${i}">↑</button><button class="btn sec" data-rn="${i}">✎</button><button class="btn del" data-rm="${i}">✕</button></div>`});
   h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
-   <div class="row"><button class="btn grow" id="cl">סגור</button></div>`;
+   <div class="row"><button class="btn grow" id="cl">סגירה</button></div>`;
   $('#shSet').innerHTML=h;$('#ovSet').classList.add('on')};
 $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
   const re=()=>$('#bSet').click();
   if(t.id==='fm'||t.id==='fp'){S.font=Math.min(40,Math.max(14,S.font+(t.id==='fp'?2:-2)));save();applyTheme();$('#fv').textContent=S.font}
   else if(t.dataset.th){S.theme=t.dataset.th;save();applyTheme();re()}
   else if(t.dataset.rm!==undefined){S.marks.splice(+t.dataset.rm,1);save();re();paintMarks();if(!cur)renderHome()}
-  else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמור'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();re();if(!cur)renderHome()}})}
+  else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמירה'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();re();if(!cur)renderHome()}})}
   else if(t.dataset.up!==undefined){const i=+t.dataset.up;if(i>0){[S.marks[i-1],S.marks[i]]=[S.marks[i],S.marks[i-1]];save();re();if(!cur)renderHome()}}
   else if(t.id==='cl'){$('#ovSet').classList.remove('on');if(!cur)renderHome()}
   else if(t.id==='exp'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='siddur-backup.json';a.click()}
