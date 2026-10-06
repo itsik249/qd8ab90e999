@@ -143,6 +143,8 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .cb{flex:none;min-width:44px;padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));font-size:15px;font-weight:600;color:var(--fg)}
 .cb.rd{background:linear-gradient(135deg,#fff3cc,#efd48a);border-color:var(--acc2)}
 .cb.on{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);color:var(--on-acc);border-color:transparent}
+.thback{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:7;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));color:var(--brown);font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(40,35,20,.25)}
+.thback.low{bottom:calc(18px + env(safe-area-inset-bottom))}
 .thr{padding-bottom:40px}.thr.mark{padding-bottom:140px}
 .dlgov{align-items:center;justify-content:center;padding:16px;background:rgba(30,15,5,.5);backdrop-filter:blur(3px)}
 .dlgov.on{display:flex}
@@ -181,6 +183,7 @@ header{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 45%,var(--acc
 <main id="home"></main>
 <div id="reader" class="hide"></div>
 <main id="th" class="hide"></main>
+<button class="thback hide" id="thBackF">↩ חזרה</button>
 <div class="thbar hide" id="thbar"><button id="thPrev">▸ הקודם</button><button id="thRd">✓ קראתי</button><button id="thNext">קראתי והמשך ◂</button></div>
 <div class="fab hide" id="fab"><button id="bTop" aria-label="לראש הדף">⬆</button><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
 
@@ -329,9 +332,9 @@ function topPara(){
 let st;window.addEventListener('scroll',()=>{if(!cur||$('#reader').classList.contains('hide'))return;clearTimeout(st);
   st=setTimeout(()=>{const e=topPara();if(e){S.last[cur.id]={k:e.dataset.k,para:+e.dataset.i};save()}},300)},{passive:true});
 function leave(){cur=null;S.open=null;save();renderHome();window.scrollTo(0,0)}
-$('#bBack').onclick=()=>{if(thOpen){history.back();return}
+$('#bBack').onclick=()=>{if(thOpen){thHome();return}
   if(history.state&&history.state.r)history.back();else leave()};
-window.addEventListener('popstate',()=>{if(thOpen)thPop();else if(cur)leave()});
+window.addEventListener('popstate',()=>{if(thOpen)thPopEvt();else if(cur)leave()});
 
 function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
 function reveal(el){

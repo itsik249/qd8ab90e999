@@ -4,7 +4,13 @@ const TH_WEEK=[['יום ראשון',1,29],['יום שני',30,50],['יום של�
 const TH_MONTH=[[1,9],[10,17],[18,22],[23,28],[29,34],[35,38],[39,43],[44,48],[49,54],[55,59],[60,65],[66,68],[69,71],[72,76],[77,78],[79,82],[83,87],[88,89],[90,96],[97,103],[104,105],[106,107],[108,112],[113,118],[119,1,96],[119,97,176],[120,134],[135,139],[140,144],[145,150]];
 const MNAMES={1:'תשרי',2:'חשוון',3:'כסלו',4:'טבת',5:'שבט',6:'אדר א׳',7:'אדר',8:'ניסן',9:'אייר',10:'סיוון',11:'תמוז',12:'אב',13:'אלול'};
 const MKEY={Tishri:1,Heshvan:2,Kislev:3,Tevet:4,Shevat:5,'Adar I':6,Adar:7,'Adar II':7,Nisan:8,Iyar:9,Sivan:10,Tamuz:11,Av:12,Elul:13};
-let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null};
+let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null},thGoingHome=false;
+function thBackBtn(show){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
+  b.textContent=thUI.ctx?'↩ חזרה לרשימה':'↩ חזרה לתהילים';
+  const cu=T().cur;b.classList.toggle('low',!!(cu&&cu.noMark))}
+/* כפתור הבית בכותרת: יוצא מתהילים בבת אחת, בלי להשאיר היסטוריה */
+function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n)}
+function thPopEvt(){if(thGoingHome){thGoingHome=false;thStack=[];T().inRead=false;save();thLeave()}else thPop()}
 
 /* ---- אותיות ומספרים ---- */
 function hebPlain(n){const o=['','א','ב','ג','ד','ה','ו','ז','ח','ט'],t=['','י','כ','ל','מ','נ','ס','ע','פ','צ'],h=['','ק','ר','ש'];
@@ -48,9 +54,9 @@ function openTh(){
 function thNav(s){thStack.push(s);history.pushState({th:1},'');thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
   if(!thStack.length){thLeave();return}thRender();window.scrollTo(0,0)}
-function thLeave(){thOpen=false;S.open=null;save();$('#bBack').textContent='‹ בית';$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
+function thLeave(){thOpen=false;S.open=null;save();$('#bBack').textContent='‹ בית';$('#thBackF').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
 function thRender(){const s=thStack[thStack.length-1];
-  $('#bBack').textContent=s.v==='menu'?'‹ בית':'‹ חזרה';
+  $('#bBack').textContent='‹ בית';thBackBtn(s.v==='read');
   if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else thRead()}
 
 /* ---- עמוד ראשי של תהילים ---- */
@@ -107,7 +113,7 @@ function thRead(){
   $('#th').innerHTML=strip+'<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
     '<div class="thctx">'+esc(cu.label||'')+(cu.seq.length>1?' · '+hn(cu.i+1)+' מתוך '+hn(cu.seq.length):'')+'</div>'+
     '<p class="thv">'+text+'</p><div class="pbar"><button class="btn sec" style="flex:1" id="thJump">☰ מזמור אחר</button></div>'+extra+'</div>';
-  $('#thbar').classList.toggle('hide',!!cu.noMark);
+  $('#thbar').classList.toggle('hide',!!cu.noMark);thBackBtn(true);
   document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px');
   const on=$('#thStrip .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
   if(!cu.noMark)thBarState();
@@ -201,6 +207,7 @@ document.addEventListener('click',async e=>{
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
+  if(id==='thBackF'){history.back();return}
   if(id==='thJump'){thJumpSheet();return}
   if(id==='thPrev'){const cu=T().cur;if(cu.i>0){cu.i--;save();thRead();window.scrollTo(0,0)}return}
   if(id==='thRd'){const cu=T().cur,k=keyOf(cu.seq[cu.i]),on=!T().read[k];thMark(on);thBarState();toast(on?'סומן: נקרא ✓':'הסימון בוטל');return}
