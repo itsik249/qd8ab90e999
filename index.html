@@ -38,6 +38,8 @@ h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
 .ph{margin:30px 0 8px;padding:8px 12px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-weight:700;color:var(--acc2);scroll-margin-top:64px}
 .ph.col{cursor:pointer;color:var(--mut);background:transparent}
 .ph.col .pl{color:var(--acc2);font-weight:700;margin-left:4px}
+.ph.col.lg{font-size:18px;font-weight:700;padding:15px 16px;margin:12px 0;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.ph.col.lg .pl{font-size:22px;margin-left:8px}
 .ph.sm{font-size:13px;font-weight:400;padding:4px 10px;margin:12px 0 6px}
 .pb.hide{display:none}
 .para.tp{line-height:1.4;padding:2px 4px}
@@ -112,7 +114,6 @@ const BOOKS=[
  {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit']},
  {id:'mayin',name:'ברכת מעין שלוש',sub:'על המחיה',secs:['Al Hamihya'],more:1},
  {id:'bed',name:'קריאת שמע שעל המיטה',sub:'',secs:['Bedtime Shema'],more:1},
- {id:'omer',name:'ספירת העומר',sub:'',secs:['Counting of the Omer'],more:1},
  {id:'moon',name:'ברכת הלבנה',sub:'',secs:['Blessing of the Moon'],more:1},
  {id:'misc',name:'ברכות ותפילות שונות',sub:'תפילת הדרך ועוד',secs:['Assorted Blessings and Prayers'],more:1},
 ];
@@ -173,9 +174,9 @@ function openBook(id,k,para,fresh){
   let h='',lastGrp=null;
   b.parts.forEach(p=>{
     if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp"><span class="st">✦</span>${esc(p.grp.replace('לימי החול','לימות החול'))}<span class="st">✦</span></div>`;lastGrp=p.grp}
-    const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
-    const tog=(t,tight)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
-    if(cp)h+=tog(p.he).replace('<div class="ph sm col">','<div class="ph sm col" id="p'+p.k+'">');
+    const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, big=!!D[p.si].colAll, cp=big||COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
+    const tog=(t,tight,lg)=>`<div class="ph ${lg?'col lg':'sm col'}"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
+    if(cp)h+=tog(p.he,false,big).replace(/^<div class="ph ([^"]*)">/,(m,c)=>'<div class="ph '+c+'" id="p'+p.k+'">');
     else if(D[p.si].parts[p.pi].noHead)h+=`<div id="p${p.k}"></div>`;
     else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
     D[p.si].parts[p.pi].paras.forEach((t,i)=>{
