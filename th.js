@@ -174,7 +174,7 @@ async function thBirthDialog(){
       '<div class="d3"><label><span>יום</span><input id="gd" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>חודש</span><input id="gm" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
       '<label><span>שנה</span><input id="gy" type="text" inputmode="numeric" maxlength="4" autocomplete="off"></label></div>'+
-      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה?</span></label><div class="chkn">נולד/ה אחרי חצות? אין צורך לסמן.</div>'+
+      '<label class="chk"><input type="checkbox" id="gSun"><span>נולד/ה אחרי השקיעה?</span></label><button type="button" class="chkl" id="gHelp">להסבר קצר</button><div class="chkx hide" id="gHelpBox">היום העברי מתחיל בשקיעה. מי שנולד/ה <b>בין השקיעה לחצות</b> נספר/ת ליום העברי הבא, ולכן מסמנים. מי שנולד/ה לפני השקיעה או אחרי חצות לא מסמנים, כי התאריך הלועזי כבר מראה את היום העברי הנכון.</div>'+
       '<button class="btn dconv" id="gConv" type="button">המרה לתאריך עברי</button><div class="dres" id="gRes"></div></div>';
   const v=await dlg({title:'תאריך לידה עברי',ok:'שמירה',noEnter:true,noFocus:true,body:body,
     onMount:root=>{
@@ -188,6 +188,7 @@ async function thBirthDialog(){
         if(q('#by').value!==String(p.y)){say('השנה מחוץ לטווח הרשימה',true);return false}
         say('✓ '+fmtBirth({d:p.d,k:p.k,y:p.y})+(sun?' (נספר כיום הבא)':''));return true};
       q('#gSun').onchange=()=>conv(false);
+      q('#gHelp').onclick=()=>q('#gHelpBox').classList.toggle('hide');
       gd.oninput=()=>{gd.value=gd.value.replace(/\D/g,'');if(gd.value.length===2)gm.focus()};
       gm.oninput=()=>{gm.value=gm.value.replace(/\D/g,'');if(gm.value.length===2||(gm.value.length===1&&+gm.value>1))gy.focus()};
       gy.oninput=()=>{gy.value=gy.value.replace(/\D/g,'');if(gy.value.length===4)conv(false)};
