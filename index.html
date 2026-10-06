@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f2a44">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>הסידור שלי</title>
+<style>
+:root{--bg:#faf6ec;--fg:#1d1b16;--card:#fff;--line:#e3dccb;--acc:#1f2a44;--acc2:#b8872b;--mut:#7a7466}
+:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80}
+@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--acc);color:#fff}
+:root[data-t=dark] header{color:#12141a}
+header h1{flex:1;margin:0;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header button{background:rgba(255,255,255,.18);border:0;border-radius:10px;padding:8px 12px;color:inherit;font-size:15px}
+main{padding:12px;max-width:760px;margin:auto;padding-bottom:90px}
+h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:15px}
+.chip.star{border-color:var(--acc2)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:right}
+.card b{display:block;font-size:17px}
+.card small{color:var(--mut);display:block;margin-top:4px}
+.resume{background:var(--acc);color:#fff;border:0;width:100%;border-radius:14px;padding:16px;font-size:17px;text-align:right;margin-bottom:10px}
+:root[data-t=dark] .resume{color:#12141a}
+.resume small{display:block;opacity:.8;margin-top:3px;font-size:13px}
+/* reader */
+#reader{padding:6px 14px 120px;max-width:760px;margin:auto}
+.ph{margin:30px 0 8px;padding:8px 12px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-weight:700;color:var(--acc2);scroll-margin-top:64px}
+.ph.col{cursor:pointer;color:var(--mut);background:transparent}
+.ph.col .pl{color:var(--acc2);font-weight:700;margin-left:4px}
+.ph.sm{font-size:13px;font-weight:400;padding:4px 10px;margin:12px 0 6px}
+.pb.hide{display:none}
+.closeb{display:block;margin:8px auto 4px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 18px;font-size:13px;color:var(--mut)}
+.grp{margin:26px 0 0;text-align:center;color:var(--mut);font-size:14px}
+.para{padding:6px 4px;line-height:1.85;border-radius:8px;scroll-margin-top:70px}
+.para.sel{background:rgba(184,135,43,.18)}
+.para.mk{border-right:4px solid var(--acc2);padding-right:8px}
+.para small{font-size:.72em;color:var(--mut)}
+.para big{font-size:1.15em}
+/* sheets */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none}
+.ov.on{display:block}
+.sheet{position:absolute;bottom:0;left:0;right:0;max-height:82vh;overflow:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom));max-width:760px;margin:auto}
+.sheet h3{margin:4px 2px 12px;font-size:17px}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.row .grow{flex:1}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:11px 14px}
+:root[data-t=dark] .btn{color:#12141a}
+.btn.sec{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+.btn.del{background:#a33;color:#fff}
+input[type=text],input[type=number]{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit}
+.li{display:flex;align-items:center;gap:8px;padding:12px 8px;border-bottom:1px solid var(--line)}
+.li .t{flex:1}
+.li.g{font-weight:700;color:var(--acc2);border:0;padding-top:16px}
+.fab{position:fixed;left:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:6;display:flex;gap:8px}
+.fab button{background:var(--acc);color:#fff;border:0;border-radius:999px;padding:14px 18px;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+:root[data-t=dark] .fab button{color:#12141a}
+.hl{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0}
+.hl .n{flex:1}.hl .p{min-width:56px;text-align:center;font-size:18px;font-weight:700}
+.hl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:20px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:999px;z-index:30;display:none;font-size:14px}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<header id="hd"><h1 id="ttl">הסידור שלי</h1><button id="bBack" class="hide">‹ בית</button><button id="bSet">⚙</button></header>
+
+<main id="home"></main>
+<div id="reader" class="hide"></div>
+<div class="fab hide" id="fab"><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
+
+<div class="ov" id="ovJump"><div class="sheet" id="shJump"></div></div>
+<div class="ov" id="ovSet"><div class="sheet" id="shSet"></div></div>
+<div class="ov" id="ovMark"><div class="sheet" id="shMark"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+const D=window.SIDDUR;
+const $=s=>document.querySelector(s);
+const byId=i=>document.getElementById(i);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- state ---------- */
+const DEF={font:22,theme:'auto',marks:[],last:{},halacha:[{n:'קיצור שו"ע — סימן',p:1}]};
+let S;
+try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('siddur')||'{}'))}catch(e){S=Object.assign({},DEF)}
+const save=()=>{try{localStorage.setItem('siddur',JSON.stringify(S))}catch(e){}};
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
+
+/* ---------- books ---------- */
+const sec=n=>D.findIndex(s=>s.title===n);
+const BOOKS=[
+ {id:'bsh',name:'ברכות השחר',sub:'מודה אני, ברכות השחר, ברכות התורה',secs:['Preparatory Prayers']},
+ {id:'shach',name:'תפילת שחרית',sub:'מפתיחת אליהו ועד עלינו',secs:['Weekday Shacharit','Additions for Shacharit']},
+ {id:'bentch',name:'ברכת המזון',sub:'',secs:['Post Meal Blessing']},
+ {id:'chatzot',name:'תיקון חצות',sub:'תיקון רחל ואחריו תיקון לאה',secs:['The Midnight Rite'],more:0},
+ {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],more:1},
+ {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit'],more:1},
+ {id:'mayin',name:'ברכת מעין שלוש',sub:'על המחיה',secs:['Al Hamihya'],more:1},
+ {id:'bed',name:'קריאת שמע שעל המיטה',sub:'',secs:['Bedtime Shema'],more:1},
+ {id:'omer',name:'ספירת העומר',sub:'',secs:['Counting of the Omer'],more:1},
+ {id:'moon',name:'ברכת הלבנה',sub:'',secs:['Blessing of the Moon'],more:1},
+ {id:'misc',name:'ברכות ותפילות שונות',sub:'תפילת הדרך ועוד',secs:['Assorted Blessings and Prayers'],more:1},
+];
+BOOKS.forEach(b=>{
+  b.parts=[];
+  b.secs.forEach(n=>{const si=sec(n);if(si<0)return;
+    D[si].parts.forEach((p,pi)=>b.parts.push({k:si+'.'+pi,he:p.he,grp:D[si].parts.length>1||b.secs.length>1?D[si].he:null,si,pi}))});
+});
+/* קטעים שתמיד נפתחים סגורים: ח = כל החלק, פ = פסקה בודדת */
+const COLLAPSE_PARTS=['Weekday Shacharit|Petichat Eliyahu','Weekday Shacharit|Order of Talit','Weekday Shacharit|Order of Tefillin'];
+const COLLAPSE_PARAS={'Weekday Shacharit|Morning Prayer':{1:'נוסח "יזהר כל אדם"'}};
+const book=id=>BOOKS.find(b=>b.id===id);
+const partOf=(b,k)=>b.parts.find(p=>p.k===k);
+
+/* ---------- theme ---------- */
+function applyTheme(){document.documentElement.dataset.t=S.theme;document.documentElement.style.setProperty('--fs',S.font+'px');
+  const r=$('#reader');if(r)r.style.fontSize=S.font+'px'}
+
+/* ---------- home ---------- */
+function goMark(m){openBook(m.book,m.k,m.para)}
+function renderHome(){
+  $('#ttl').textContent='הסידור שלי';$('#bBack').classList.add('hide');
+  $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#home').classList.remove('hide');
+  let h='';
+  const lastId=S.lastBook;
+  if(lastId&&book(lastId)&&S.last[lastId]){const b=book(lastId),l=S.last[lastId],p=partOf(b,l.k);
+    h+=`<button class="resume" data-resume="${lastId}">▶ המשך: ${esc(b.name)}<small>${p?esc(p.he):''}</small></button>`}
+  if(S.marks.length){h+='<h2 class="sec">הסימניות שלי</h2><div class="chips">'+
+    S.marks.map((m,i)=>`<button class="chip star" data-m="${i}">★ ${esc(m.label)}</button>`).join('')+'</div>'}
+  h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+BOOKS.filter(b=>!b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
+  h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
+  $('#home').innerHTML=h;
+}
+$('#home').addEventListener('click',e=>{
+  const t=e.target.closest('button,.p');if(!t)return;
+  if(t.dataset.resume){const l=S.last[t.dataset.resume];openBook(t.dataset.resume,l.k,l.para)}
+  else if(t.dataset.m!==undefined)goMark(S.marks[+t.dataset.m]);
+  else if(t.dataset.b)openBook(t.dataset.b,null,null,true);
+});
+
+/* ---------- reader ---------- */
+let cur=null;
+function openBook(id,k,para,fresh){
+  const b=book(id);cur={id};S.lastBook=id;S.open=id;save();
+  $('#home').classList.add('hide');const r=$('#reader');r.classList.remove('hide');$('#fab').classList.remove('hide');
+  $('#ttl').textContent=b.name;$('#bBack').classList.remove('hide');
+  let h='',lastGrp=null;
+  b.parts.forEach(p=>{
+    if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp">— ${esc(p.grp)} —</div>`;lastGrp=p.grp}
+    const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), cq=COLLAPSE_PARAS[pk]||{};
+    const tog=(t)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide">`, cls='<button class="closeb">− סגור</button></div>';
+    if(cp)h+=tog(p.he).replace('<div class="ph sm col">','<div class="ph sm col" id="p'+p.k+'">');
+    else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
+    D[p.si].parts[p.pi].paras.forEach((t,i)=>{
+      const para=`<div class="para" id="q${p.k}_${i}" data-k="${p.k}" data-i="${i}">${t}</div>`;
+      h+=cq[i]?tog(cq[i])+para+cls:para});
+    if(cp)h+=cls;
+  });
+  r.innerHTML=h;applyTheme();paintMarks();
+  const target=k?(para!=null?byId('q'+k+'_'+para):byId('p'+k)):null;
+  if(target)reveal(target);
+  if(target){target.scrollIntoView({block:'start'});if(para!=null){target.classList.add('sel');setTimeout(()=>target.classList.remove('sel'),1800)}}
+  else if(!k&&!fresh&&S.last[id]){const l=S.last[id],t=byId('q'+l.k+'_'+l.para);if(t){reveal(t);t.scrollIntoView({block:'start'})}}
+  else window.scrollTo(0,0);
+  history.pushState({r:1},'');
+}
+function paintMarks(){
+  document.querySelectorAll('.para.mk').forEach(e=>e.classList.remove('mk'));
+  S.marks.forEach(m=>{if(m.book===cur?.id&&m.para!=null){const e=byId('q'+m.k+'_'+m.para);if(e)e.classList.add('mk')}})}
+function topPara(){
+  const ps=document.querySelectorAll('#reader .para');
+  for(const e of ps){if(e.getBoundingClientRect().bottom>70)return e}
+}
+let st;window.addEventListener('scroll',()=>{if(!cur||$('#reader').classList.contains('hide'))return;clearTimeout(st);
+  st=setTimeout(()=>{const e=topPara();if(e){S.last[cur.id]={k:e.dataset.k,para:+e.dataset.i};save()}},300)},{passive:true});
+function leave(){cur=null;S.open=null;save();renderHome();window.scrollTo(0,0)}
+$('#bBack').onclick=()=>{if(history.state&&history.state.r)history.back();else leave()};
+window.addEventListener('popstate',()=>{if(cur)leave()});
+
+function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
+function reveal(el){
+  if(el.classList.contains('col')){setOpen(el,true);return}
+  const pb=el.closest('.pb.hide');if(pb)setOpen(pb.previousElementSibling,true)}
+$('#reader').addEventListener('click',e=>{const cb=e.target.closest('.closeb');if(cb){const t=cb.closest('.pb').previousElementSibling;setOpen(t,false);if(t.getBoundingClientRect().top<70||t.getBoundingClientRect().top>innerHeight)t.scrollIntoView({block:'center'});return}
+  const c=e.target.closest('.col');if(!c)return;
+  const open=c.nextElementSibling.classList.contains('hide');setOpen(c,open);
+  if(!open&&c.getBoundingClientRect().top<70)c.scrollIntoView({block:'start'})});
+/* tap paragraph -> add mark */
+let selEl=null;
+$('#reader').addEventListener('click',e=>{
+  const p=e.target.closest('.para');if(!p)return;
+  if(selEl)selEl.classList.remove('sel');selEl=p;p.classList.add('sel')});
+$('#bMark').onclick=()=>{
+  const e=selEl||topPara();if(!e){return}
+  const b=book(cur.id),part=partOf(b,e.dataset.k);
+  const ex=S.marks.findIndex(m=>m.book===cur.id&&m.k===e.dataset.k&&m.para==+e.dataset.i);
+  const snippet=e.textContent.trim().slice(0,60);
+  $('#shMark').innerHTML=`<h3>סימנייה חדשה</h3>
+   <p style="color:var(--mut);margin:0 0 10px">${esc(part.he)} — ${esc(snippet)}…</p>
+   <input type="text" id="mkLabel" value="${esc(ex>=0?S.marks[ex].label:part.he)}">
+   <div class="row"><button class="btn grow" id="mkSave">שמור סימנייה</button>
+   ${ex>=0?'<button class="btn del" id="mkDel">מחק</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
+   <p style="color:var(--mut);font-size:13px">טיפ: לחיצה על פסקה מסמנת אותה, ואז ★ שומר בדיוק את המקום הזה. בלי סימון תישמר הפסקה שבראש המסך.</p>`;
+  $('#ovMark').classList.add('on');
+  $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
+  $('#mkSave').onclick=()=>{const label=$('#mkLabel').value.trim()||part.he;
+    const m={book:cur.id,k:e.dataset.k,para:+e.dataset.i,label};
+    if(ex>=0)S.marks[ex]=m;else S.marks.push(m);save();paintMarks();$('#ovMark').classList.remove('on');toast('נשמר ★')};
+  if(ex>=0)$('#mkDel').onclick=()=>{S.marks.splice(ex,1);save();paintMarks();$('#ovMark').classList.remove('on')};
+};
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+
+/* jump sheet */
+$('#bJump').onclick=()=>{
+  const b=book(cur.id);let h=`<h3>קפיצה — ${esc(b.name)}</h3>`;
+  const mk=S.marks.map((m,i)=>({m,i})).filter(x=>x.m.book===cur.id);
+  if(mk.length){h+='<div class="li g">★ הסימניות שלי</div>'+mk.map(x=>`<div class="li" data-mk="${x.i}"><span class="t">★ ${esc(x.m.label)}</span></div>`).join('')}
+  let lg=null;
+  b.parts.forEach(p=>{if(p.grp&&p.grp!==lg){h+=`<div class="li g">${esc(p.grp)}</div>`;lg=p.grp}
+    h+=`<div class="li" data-pk="${p.k}"><span class="t">${esc(p.he)}</span></div>`});
+  $('#shJump').innerHTML=h;$('#ovJump').classList.add('on')};
+$('#shJump').addEventListener('click',e=>{const t=e.target.closest('.li');if(!t)return;
+  $('#ovJump').classList.remove('on');
+  if(t.dataset.mk!==undefined){const m=S.marks[+t.dataset.mk];const x=byId('q'+m.k+'_'+m.para);if(x){reveal(x);x.scrollIntoView({block:'start'})}}
+  else if(t.dataset.pk){const x=byId('p'+t.dataset.pk);reveal(x);x.scrollIntoView({block:'start'})}});
+
+/* settings */
+$('#bSet').onclick=()=>{
+  let h=`<h3>הגדרות</h3>
+  <div class="row"><span class="grow">גודל גופן</span><button class="btn sec" id="fm">א−</button><b id="fv">${S.font}</b><button class="btn sec" id="fp">א+</button></div>
+  <div class="row"><span class="grow">מצב תצוגה</span>
+   <button class="btn ${S.theme==='auto'?'':'sec'}" data-th="auto">אוטו</button>
+   <button class="btn ${S.theme==='light'?'':'sec'}" data-th="light">בהיר</button>
+   <button class="btn ${S.theme==='dark'?'':'sec'}" data-th="dark">כהה</button></div>
+  <h3 style="margin-top:18px">ניהול סימניות</h3>`;
+  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
+  S.marks.forEach((m,i)=>{const b=book(m.book);h+=`<div class="li"><span class="t">${esc(m.label)}<br><small style="color:var(--mut)">${esc(b?b.name:'')}</small></span>
+    <button class="btn sec" data-up="${i}">↑</button><button class="btn sec" data-rn="${i}">✎</button><button class="btn del" data-rm="${i}">✕</button></div>`});
+  h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
+   <div class="row"><button class="btn grow" id="cl">סגור</button></div>`;
+  $('#shSet').innerHTML=h;$('#ovSet').classList.add('on')};
+$('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+  const re=()=>$('#bSet').click();
+  if(t.id==='fm'||t.id==='fp'){S.font=Math.min(40,Math.max(14,S.font+(t.id==='fp'?2:-2)));save();applyTheme();$('#fv').textContent=S.font}
+  else if(t.dataset.th){S.theme=t.dataset.th;save();applyTheme();re()}
+  else if(t.dataset.rm!==undefined){S.marks.splice(+t.dataset.rm,1);save();re();paintMarks();if(!cur)renderHome()}
+  else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];const v=prompt('שם חדש:',m.label);if(v){m.label=v;save();re();if(!cur)renderHome()}}
+  else if(t.dataset.up!==undefined){const i=+t.dataset.up;if(i>0){[S.marks[i-1],S.marks[i]]=[S.marks[i],S.marks[i-1]];save();re();if(!cur)renderHome()}}
+  else if(t.id==='cl'){$('#ovSet').classList.remove('on');if(!cur)renderHome()}
+  else if(t.id==='exp'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='siddur-backup.json';a.click()}
+  else if(t.id==='imp'){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(x=>{try{S=Object.assign({},DEF,JSON.parse(x));save();location.reload()}catch(_){toast('קובץ לא תקין')}})};i.click()}
+});
+
+applyTheme();history.replaceState({h:1},'');
+if(S.open&&book(S.open))openBook(S.open);else renderHome();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
