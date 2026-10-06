@@ -48,7 +48,7 @@ const fmtBirth=b=>heb(b.d)+' ב'+MNAMES[b.k]+' '+heb(b.y%1000);
 /* ---- ניווט ---- */
 function openTh(){
   thOpen=true;S.open='th';save();thUI={open:null,sub:null,ctx:null};
-  $('#home').classList.add('hide');$('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.remove('hide');
+  $('#home').classList.add('hide');$('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#tabbar').classList.add('hide');$('#th').classList.remove('hide');
   $('#ttl').textContent='תהילים';$('#bBack').classList.remove('hide');
   thStack=[{v:'menu'}];
   if(T().inRead&&T().cur)thStack.push({v:'read'});
@@ -56,11 +56,12 @@ function openTh(){
 function thNav(s){thStack.push(s);history.pushState({th:1},'');thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
   if(!thStack.length){thLeave();return}thRender();window.scrollTo(0,0)}
-function thLeave(){thOpen=false;S.open=null;save();$('#bBack').textContent='‹ בית';$('#thBackF').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
+function thLeave(){thOpen=false;S.open=null;save();$('#thBackF').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
 function thRender(){const s=thStack[thStack.length-1];
-  $('#bBack').textContent='‹ בית';thBackBtn(s.v==='read');
+  thBackBtn(s.v==='read');
   if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else thRead()}
 
+function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'החלק של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
 /* ---- עמוד ראשי של תהילים ---- */
 function chipsHTML(ctx){const items=ctx.items,fu=items.findIndex(x=>!itRead(x));
   return '<div class="thn">'+esc(ctx.title)+'</div><div class="pbar"><button class="btn" style="flex:1" data-cs="'+Math.max(0,fu)+'">'+(fu>0?'המשך מהמזמור שעוד לא נקרא':'להתחיל לקרוא')+'</button></div>'+
