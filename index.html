@@ -4,14 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1f2a44">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
 <title>הסידור שלי</title>
 <style>
-:root{--bg:#faf6ec;--fg:#1d1b16;--card:#fff;--line:#e3dccb;--acc:#1f2a44;--acc2:#b8872b;--mut:#7a7466}
-:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80}
-@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80}}
+:root{--bg:#faf6ec;--fg:#1d1b16;--card:#fff;--line:#e3dccb;--acc:#1f2a44;--acc2:#b8872b;--mut:#7a7466;--brown:#6b3b1f}
+:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872}
+@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Arial,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -40,7 +42,8 @@ h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
 .pb.hide{display:none}
 .pb.tight .para{line-height:1.45;padding:2px 4px}
 .closeb{display:block;margin:8px auto 4px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 18px;font-size:13px;color:var(--mut)}
-.grp{margin:26px 0 0;text-align:center;color:var(--mut);font-size:14px}
+.grp{margin:36px 0 6px;padding-bottom:14px;text-align:center;font-family:'Frank Ruhl Libre','David Libre',Georgia,serif;font-weight:900;font-size:1.5em;line-height:1.3;color:var(--brown);background:linear-gradient(90deg,transparent,var(--acc2),transparent) bottom/70% 2px no-repeat}
+.grp .st{color:var(--acc2);font-size:.6em;margin:0 12px;vertical-align:middle}
 .para{padding:6px 4px;line-height:1.85;border-radius:8px;scroll-margin-top:70px}
 .para.sel{background:rgba(184,135,43,.18)}
 .para.mk{border-right:4px solid var(--acc2);padding-right:8px}
@@ -104,7 +107,7 @@ const BOOKS=[
  {id:'shach',name:'תפילת שחרית',sub:'מפתיחת אליהו ועד עלינו',secs:['Weekday Shacharit','Additions for Shacharit']},
  {id:'bentch',name:'ברכת המזון',sub:'',secs:['Post Meal Blessing']},
  {id:'chatzot',name:'תיקון חצות',sub:'תיקון רחל ואחריו תיקון לאה',secs:['The Midnight Rite'],more:0},
- {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],more:1},
+ {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],pre:['Weekday Shacharit|Petichat Eliyahu'],more:1},
  {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit'],more:1},
  {id:'mayin',name:'ברכת מעין שלוש',sub:'על המחיה',secs:['Al Hamihya'],more:1},
  {id:'bed',name:'קריאת שמע שעל המיטה',sub:'',secs:['Bedtime Shema'],more:1},
@@ -114,6 +117,8 @@ const BOOKS=[
 ];
 BOOKS.forEach(b=>{
   b.parts=[];
+  (b.pre||[]).forEach(x=>{const [sn,pn]=x.split('|'),si=sec(sn),pi=D[si].parts.findIndex(q=>q.title===pn);
+    b.parts.push({k:si+'.'+pi,he:D[si].parts[pi].he,grp:D[sec(b.secs[0])].he,si,pi})});
   b.secs.forEach(n=>{const si=sec(n);if(si<0)return;
     D[si].parts.forEach((p,pi)=>b.parts.push({k:si+'.'+pi,he:p.he,grp:D[si].parts.length>1||b.secs.length>1?D[si].he:null,si,pi}))});
 });
@@ -161,7 +166,7 @@ function openBook(id,k,para,fresh){
   $('#ttl').textContent=b.name;$('#bBack').classList.remove('hide');
   let h='',lastGrp=null;
   b.parts.forEach(p=>{
-    if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp">— ${esc(p.grp)} —</div>`;lastGrp=p.grp}
+    if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp"><span class="st">✦</span>${esc(p.grp.replace('לימי החול','לימות החול'))}<span class="st">✦</span></div>`;lastGrp=p.grp}
     const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
     const tog=(t,tight)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
     if(cp)h+=tog(p.he).replace('<div class="ph sm col">','<div class="ph sm col" id="p'+p.k+'">');
