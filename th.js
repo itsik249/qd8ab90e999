@@ -65,8 +65,9 @@ function thPanel(){const t=T(),o=thUI.open,hd=hebToday();let h='';
   if(o==='books'){h+='<div class="stg">'+TH_BOOKS.map((b,i)=>'<button class="stl'+(thUI.sub==='b'+i?' on':'')+'" data-sub="b'+i+'">'+b[0]+'</button>').join('')+'</div>'}
   else if(o==='week'){h+='<div class="stg">'+TH_WEEK.map((b,i)=>'<button class="stl'+(thUI.sub==='w'+i?' on':'')+(i===hd.wd?' today':'')+'" data-sub="w'+i+'">'+b[0]+(i===hd.wd?' · היום':'')+'</button>').join('')+'</div>'}
   else if(o==='month'){
-    h+='<p class="thn" style="margin-top:0">היום '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+(hd.short?' · בחודש חסר קוראים גם את חלק ל׳':'')+'</p>'+
-      '<div class="pbar" style="margin:0 0 10px"><button class="btn" style="flex:1" data-md="today">▶ החלק של היום</button><button class="btn sec" data-ss="1">'+(isAfterSunset()?'✓ ':'')+'אחרי השקיעה</button></div>'+
+    h+='<p class="thn" style="margin:0 2px 2px;font-size:16px;color:var(--fg)"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+'</b>'+(isAfterSunset()?' · מהערב':'')+(hd.short?'<br><span style="font-size:13px;color:var(--mut)">בחודש חסר קוראים גם את חלק ל׳</span>':'')+'</p>'+
+      '<p class="thn" style="margin:0 2px 8px;font-size:12px">אחרי השקיעה כבר נחשב היום הבא. אם כבר ערב אצלך, לחץ על 🌙 כבר ערב.</p>'+
+      '<div class="pbar" style="margin:0 0 10px"><button class="btn" style="flex:1" data-md="today">▶ החלק של היום</button><button class="btn sec" data-ss="1">'+(isAfterSunset()?'✓ ':'🌙 ')+'כבר ערב</button></div>'+
       '<div class="stg d6">'+Array.from({length:30},(_,i)=>'<button class="stl'+(thUI.sub==='m'+(i+1)?' on':'')+(i+1===hd.day?' today':'')+'" data-sub="m'+(i+1)+'">'+hebPlain(i+1)+'</button>').join('')+'</div>'}
   else if(o==='age'){const b=t.birth,a=curAge();
     h+='<p class="thn" style="margin-top:0">הקלד גיל כדי לפתוח את המזמור של השנה שאחריו.</p><div class="thq" style="margin-top:0"><input type="number" id="thAge" inputmode="numeric" min="0" max="149" placeholder="בן/בת כמה?"><button class="btn" id="thAgeGo">אישור</button></div>'+
