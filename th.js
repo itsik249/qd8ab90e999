@@ -6,7 +6,7 @@ const MNAMES={1:'תשרי',2:'חשוון',3:'כסלו',4:'טבת',5:'שבט',6:'
 const MKEY={Tishri:1,Heshvan:2,Kislev:3,Tevet:4,Shevat:5,'Adar I':6,Adar:7,'Adar II':7,Nisan:8,Iyar:9,Sivan:10,Tamuz:11,Av:12,Elul:13};
 let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null},thGoingHome=false;
 function thBackBtn(show){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
-  const lbl=thUI.ctx?'↩ חזרה לרשימת המזמורים':'↩ חזרה לתהילים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
+  const lbl='↩ חזרה לרשימת המזמורים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
   const cu=T().cur;b.classList.toggle('low',!!(cu&&cu.noMark))}
 /* כפתור הבית בכותרת: יוצא מתהילים בבת אחת, בלי להשאיר היסטוריה */
 function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n)}
