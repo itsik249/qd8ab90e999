@@ -225,6 +225,8 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 .drawer{position:absolute;top:0;bottom:0;right:0;width:min(84vw,330px);background:linear-gradient(180deg,var(--card),var(--card2));box-shadow:-8px 0 26px rgba(0,0,0,.3);overflow:auto;animation:drin .18s ease-out}
 @keyframes drin{from{transform:translateX(100%)}to{transform:none}}
 .drawer .dtop{padding:22px 18px 16px;color:var(--on-acc);background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);border-bottom:3px solid var(--acc2)}
+.drawer .dtop{position:relative}
+.drawer .dx{position:absolute;top:14px;left:14px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:var(--on-acc);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
 .drawer .dtop b{display:block;font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:900;font-size:23px}
 .drawer .dtop small{opacity:.9;font-size:13px}
 .drawer .mi{display:flex;align-items:center;gap:14px;width:100%;padding:15px 18px;background:none;border:0;border-bottom:1px solid var(--line);font-size:16px;font-weight:700;text-align:right;color:var(--fg)}
@@ -286,7 +288,7 @@ function closeMenu(){$('#ovMenu').classList.remove('on')}
 function openMenu(){
   const it=(k,ic,t)=>'<button class="mi" data-mi="'+k+'">'+SV(ic)+'<span>'+t+'</span></button>';
   let sub='';try{const hd=hebToday();sub=TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+hd.mon:'')}catch(e){}
-  $('#drawer').innerHTML='<div class="dtop"><b>הסידור שלי</b><small>'+esc(sub)+'</small></div>'+
+  $('#drawer').innerHTML='<div class="dtop"><button class="dx" data-mi="close" aria-label="סגירה">✕</button><b>הסידור שלי</b><small>'+esc(sub)+'</small></div>'+
     it('home','<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>','בית')+
     it('th','<path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"/>','תהילים')+
     it('marks','<path d="M6 3h12v18l-6-4-6 4z"/>','הסימניות שלי')+
