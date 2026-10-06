@@ -164,15 +164,34 @@ async function thSaveAge(){const cu=T().cur,b=T().birth;
   if(!v)return;T().lists.push({n:v.n.trim()||'מזמור לפי גיל',items:[{c:cu.seq[0].c}],dyn:!!b});save();toast('נשמר במזמורים אישיים ✓')}
 async function thBirthDialog(){
   const b=T().birth||{},now=hebParts(new Date());
-  const days=[['','בחירת יום']].concat(Array.from({length:30},(_,i)=>[i+1,heb(i+1)])),
-        months=[['','בחירת חודש']].concat(Object.entries(MNAMES).map(([k,n])=>[k,k==='7'?'אדר / אדר ב׳':n])),
-        years=[['','בחירת שנה']].concat(Array.from({length:111},(_,i)=>[now.y-i,heb((now.y-i)%1000)]));
-  const v=await dlg({title:'תאריך לידה עברי',msg:'בכל יום הולדת עברי המזמור יתעדכן אוטומטית.',ok:'שמירה',
-    fields:[{id:'d',label:'יום',type:'select',options:days,value:b.d||''},{id:'m',label:'חודש',type:'select',options:months,value:b.k||''},{id:'y',label:'שנה',type:'select',options:years,value:b.y||''},
-            {id:'g',cls:'big',label:'לא יודע/ת את התאריך העברי שלך? אפשר להקליד את הלועזי וזה יתמלא לבד.',type:'date'}],
-    onMount:root=>{root.querySelector('#df_g').onchange=e=>{const val=e.target.value;if(!val)return;const p=hebParts(new Date(val+'T12:00:00'));
-      root.querySelector('#df_d').value=p.d;root.querySelector('#df_m').value=p.k;root.querySelector('#df_y').value=p.y}},
-    collect:root=>{const d=root.querySelector('#df_d').value,m=root.querySelector('#df_m').value,y=root.querySelector('#df_y').value;
+  const opts=(arr,val)=>arr.map(x=>'<option value="'+x[0]+'"'+(String(x[0])===String(val)?' selected':'')+'>'+x[1]+'</option>').join('');
+  const days=[['','בחירה']].concat(Array.from({length:30},(_,i)=>[i+1,heb(i+1)])),
+        months=[['','בחירה']].concat(Object.entries(MNAMES).map(([k,n])=>[k,k==='7'?'אדר / אדר ב׳':n])),
+        years=[['','בחירה']].concat(Array.from({length:111},(_,i)=>[now.y-i,heb((now.y-i)%1000)]));
+  const body='<div class="sec3"><b>תאריך עברי</b><div class="d3"><label><span>יום</span><select id="bd">'+opts(days,b.d||'')+'</select></label>'+
+      '<label><span>חודש</span><select id="bm">'+opts(months,b.k||'')+'</select></label><label><span>שנה</span><select id="by">'+opts(years,b.y||'')+'</select></label></div></div>'+
+    '<div class="sec3 gr"><b>לא יודע/ת את התאריך העברי שלך? אפשר להקליד את הלועזי וזה יתמלא לבד.</b>'+
+      '<div class="d3"><label><span>יום</span><input id="gd" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
+      '<label><span>חודש</span><input id="gm" type="text" inputmode="numeric" maxlength="2" autocomplete="off"></label>'+
+      '<label><span>שנה</span><input id="gy" type="text" inputmode="numeric" maxlength="4" autocomplete="off"></label></div>'+
+      '<button class="btn dconv" id="gConv" type="button">המרה לתאריך עברי</button><div class="dres" id="gRes"></div></div>';
+  const v=await dlg({title:'תאריך לידה עברי',ok:'שמירה',noEnter:true,noFocus:true,body:body,
+    onMount:root=>{
+      const q=s=>root.querySelector(s),gd=q('#gd'),gm=q('#gm'),gy=q('#gy'),res=q('#gRes');
+      const say=(m,bad)=>{res.textContent=m;res.className='dres'+(bad?' bad':' ok')};
+      const conv=(manual)=>{const d=+gd.value,m=+gm.value,y=+gy.value;
+        if(!gd.value||!gm.value||gy.value.length<4){if(manual)say('יש להקליד יום, חודש ושנה (ארבע ספרות)',true);return false}
+        const dt=new Date(y,m-1,d,12);
+        if(y<1800||dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d){say('התאריך הלועזי לא תקין',true);return false}
+        const p=hebParts(dt);q('#bd').value=p.d;q('#bm').value=p.k;q('#by').value=p.y;
+        if(q('#by').value!==String(p.y)){say('השנה מחוץ לטווח הרשימה',true);return false}
+        say('✓ '+fmtBirth({d:p.d,k:p.k,y:p.y}));return true};
+      gd.oninput=()=>{gd.value=gd.value.replace(/\D/g,'');if(gd.value.length===2)gm.focus()};
+      gm.oninput=()=>{gm.value=gm.value.replace(/\D/g,'');if(gm.value.length===2||(gm.value.length===1&&+gm.value>1))gy.focus()};
+      gy.oninput=()=>{gy.value=gy.value.replace(/\D/g,'');if(gy.value.length===4)conv(false)};
+      [gd,gm,gy].forEach(i=>i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();conv(true)}});
+      q('#gConv').onclick=()=>conv(true)},
+    collect:root=>{const d=root.querySelector('#bd').value,m=root.querySelector('#bm').value,y=root.querySelector('#by').value;
       if(!d||!m||!y){toast('יש לבחור יום, חודש ושנה');return false}return {d:d,m:m,y:y}}});
   if(!v)return false;T().birth={d:+v.d,k:+v.m,y:+v.y};T().birthNo=false;save();return true}
 
