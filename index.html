@@ -11,9 +11,9 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>הסידור שלי</title>
 <style>
-:root{--bg:#faf6ec;--fg:#1d1b16;--card:#ffffff;--line:#e3dccb;--acc:#1f6f6a;--accd:#134743;--acc2:#b8872b;--mut:#7a7466;--brown:#6b3b1f;--on-acc:#ffffff;--sh:0 2px 8px rgba(40,35,20,.10)}
-:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--accd:#a07d2a;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872;--on-acc:#14110a;--sh:0 2px 10px rgba(0,0,0,.4)}
-@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--accd:#a07d2a;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872;--on-acc:#14110a;--sh:0 2px 10px rgba(0,0,0,.4)}}
+:root{--bg:#faf6ec;--fg:#1d1b16;--card:#ffffff;--line:#e3dccb;--acc:#1f6f6a;--acc3:#34a198;--accd:#123f3c;--card2:#fbf2dc;--bg2:#f2e8cf;--acc2:#b8872b;--mut:#7a7466;--brown:#6b3b1f;--on-acc:#ffffff;--sh:0 2px 8px rgba(40,35,20,.10)}
+:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc3:#e6c778;--accd:#a07d2a;--card2:#171a22;--bg2:#0d0f14;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872;--on-acc:#14110a;--sh:0 2px 10px rgba(0,0,0,.4)}
+@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc3:#e6c778;--accd:#a07d2a;--card2:#171a22;--bg2:#0d0f14;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872;--on-acc:#14110a;--sh:0 2px 10px rgba(0,0,0,.4)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Arial,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -149,6 +149,25 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .dchips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;min-height:34px}
 .dchip{display:inline-flex;align-items:center;gap:6px;background:rgba(184,135,43,.18);border:1px solid var(--acc2);border-radius:999px;padding:6px 8px 6px 12px;font-weight:600}
 .dchip button{background:none;border:0;color:var(--mut);font-size:15px;padding:0 4px}
+
+/* ===== גרדיאנטים: חיים יותר ===== */
+html,body{background:var(--bg)}
+body{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%) fixed}
+header{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 45%,var(--accd) 100%);border-bottom:3px solid var(--acc2)}
+.btn,.thbar button#thNext,.fab button,.pli button.go{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);color:var(--on-acc)!important}
+.btn.sec{background:linear-gradient(180deg,var(--card),var(--card2))}
+.btn.del{background:linear-gradient(135deg,#d4574a,#a53226)}
+.card,.tile,.chip,.stl,.chb,.pli,.sugg,.agebox,.minires button,.thbar button{background:linear-gradient(180deg,var(--card),var(--card2))}
+.thbar button#thNext{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%)}
+.tile.on,.stl.on{background:linear-gradient(135deg,#fff6d8,#f1d995);border-color:var(--acc2)}
+.chb.rd,.dbtn.rd{background:linear-gradient(135deg,#fff3cc,#efd48a)}
+.ph{background:linear-gradient(180deg,var(--card),var(--card2))}
+.ph.col.lg{background:linear-gradient(180deg,var(--card),var(--card2))}
+.panel{background:linear-gradient(180deg,rgba(184,135,43,.10),rgba(52,161,152,.07))}
+.thbar{background:linear-gradient(180deg,var(--bg),var(--bg2))}
+.dlg{background:linear-gradient(180deg,var(--card),var(--card2))}
+.rs{background:linear-gradient(135deg,var(--acc3),var(--accd))}
+.dchip{background:linear-gradient(135deg,#fff3cc,#efd48a)}
 </style>
 </head>
 <body>
