@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1f2a44">
+<meta name="theme-color" content="#6b3b1f">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
@@ -11,9 +11,9 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>הסידור שלי</title>
 <style>
-:root{--bg:#faf6ec;--fg:#1d1b16;--card:#fff;--line:#e3dccb;--acc:#1f2a44;--acc2:#b8872b;--mut:#7a7466;--brown:#6b3b1f}
-:root[data-t=dark]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872}
-@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#12141a;--fg:#e9e4d6;--card:#1c1f28;--line:#2c3040;--acc:#c9a24d;--acc2:#c9a24d;--mut:#8d8a80;--brown:#e0b872}}
+:root{--bg:#f7efe0;--fg:#2a1d12;--card:#fffcf4;--line:#e5d6b8;--acc:#6b3b1f;--accd:#4a2711;--acc2:#b8872b;--mut:#8a7a62;--brown:#6b3b1f;--on-acc:#fff7e6;--sh:0 2px 10px rgba(90,55,20,.12)}
+:root[data-t=dark]{--bg:#17120c;--fg:#efe6d4;--card:#231b12;--line:#3a2d1d;--acc:#c9a24d;--accd:#a07d2a;--acc2:#c9a24d;--mut:#a09580;--brown:#e0b872;--on-acc:#1a1208;--sh:0 2px 10px rgba(0,0,0,.4)}
+@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#17120c;--fg:#efe6d4;--card:#231b12;--line:#3a2d1d;--acc:#c9a24d;--accd:#a07d2a;--acc2:#c9a24d;--mut:#a09580;--brown:#e0b872;--on-acc:#1a1208;--sh:0 2px 10px rgba(0,0,0,.4)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Segoe UI",Arial,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -95,6 +95,59 @@ select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);b
 .thbar button{flex:1;padding:14px 6px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px}
 .thbar button#thNext{flex:1.6;background:var(--acc);color:#fff;border-color:var(--acc)}:root[data-t=dark] .thbar button#thNext{color:#12141a}
 .thbar button#thRd.on{background:rgba(184,135,43,.25);border-color:var(--acc2)}.thbar button:disabled{opacity:.4}
+
+/* ===== עיצוב מחודש ===== */
+header{background:linear-gradient(180deg,var(--acc),var(--accd));color:var(--on-acc)!important;box-shadow:0 2px 12px rgba(0,0,0,.22)}
+header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;font-weight:600}
+.btn,.thbar button#thNext,.fab button{background:linear-gradient(135deg,var(--acc),var(--accd));color:var(--on-acc)!important;border:0;border-radius:14px;font-weight:600;box-shadow:var(--sh)}
+.btn{padding:12px 18px}
+.btn.sec{background:var(--card);color:var(--fg)!important;border:1px solid var(--line);box-shadow:none}
+.btn.del{background:linear-gradient(135deg,#b03a2e,#8c2b21);color:#fff!important}
+.btn:active,.card:active,.tile:active{transform:scale(.97)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 14px;box-shadow:var(--sh);transition:transform .08s}
+.card b{font-size:17px;color:var(--brown)}
+.chip{border-radius:999px;box-shadow:var(--sh);background:var(--card)}
+.fab button{border-radius:999px;padding:13px 18px;box-shadow:0 4px 14px rgba(60,30,10,.35)}
+.resume{display:none}
+.rs{display:flex;align-items:center;gap:6px;margin:0 0 12px;background:linear-gradient(135deg,var(--acc),var(--accd));border-radius:999px;padding:3px 4px 3px 10px;box-shadow:var(--sh)}
+.rsb{flex:1;background:none;border:0;color:var(--on-acc);font-size:14px;font-weight:600;text-align:right;padding:9px 12px}
+.rsx{background:rgba(255,255,255,.2);border:0;color:var(--on-acc);width:30px;height:30px;border-radius:50%;font-size:13px}
+.sheet{border-radius:22px 22px 0 0}
+.tabs{display:none}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:16px 8px;border-radius:18px;border:1px solid var(--line);background:var(--card);box-shadow:var(--sh);font-size:16px;font-weight:700;color:var(--brown);min-height:84px;transition:transform .08s}
+.tile .ic{font-size:26px;line-height:1}
+.tile.on{border-color:var(--acc2);background:linear-gradient(180deg,var(--card),rgba(184,135,43,.16));box-shadow:0 0 0 2px var(--acc2) inset,var(--sh)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.tiles .tile.wide{grid-column:1/-1;min-height:64px;flex-direction:row;gap:10px}
+.panel{background:rgba(184,135,43,.08);border:1px solid var(--line);border-radius:18px;padding:12px;margin:0 0 16px}
+.stg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stg.d6{grid-template-columns:repeat(6,1fr)}
+.stl{padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:600;color:var(--fg);box-shadow:var(--sh)}
+.stl.on{border-color:var(--acc2);background:rgba(184,135,43,.2)}
+.stl.today{box-shadow:0 0 0 2px var(--acc2) inset}
+.chs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.chb{padding:12px 2px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:16px;font-weight:600;color:var(--fg)}
+.chb.rd{background:rgba(184,135,43,.22);border-color:var(--acc2)}
+.pbar{display:flex;gap:8px;margin-top:12px}
+.pli{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;margin:8px 0;box-shadow:var(--sh)}
+.pli .pn{flex:1;min-width:0}.pli .pn small{display:block;color:var(--mut);margin-top:3px;font-size:13px}
+.pli button{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:14px;color:var(--fg)}
+.pli button.go{background:linear-gradient(135deg,var(--acc),var(--accd));color:var(--on-acc);border:0;font-weight:600}
+.minires{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
+.minires button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;color:var(--brown);font-weight:600}
+.sugg,.agebox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;box-shadow:var(--sh)}
+.sugg p{margin:6px 0 12px;color:var(--mut);font-size:14px}
+.thr{padding-bottom:40px}.thr.mark{padding-bottom:140px}
+.dlgov{align-items:center;justify-content:center;padding:16px;background:rgba(30,15,5,.5);backdrop-filter:blur(3px)}
+.dlgov.on{display:flex}
+.dlg{width:min(94vw,400px);max-height:88vh;overflow:auto;background:var(--card);color:var(--fg);border-radius:22px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.dlg h3{margin:0 0 6px;font-size:19px;color:var(--brown)}
+.dlg .dm{margin:6px 0 14px;color:var(--mut);line-height:1.5}
+.df{display:block;margin:10px 0}.df>span{display:block;font-size:13px;color:var(--mut);margin-bottom:4px}
+.dbtns{display:flex;gap:10px;margin-top:18px}.dbtns .btn{flex:1}
+.dchips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;min-height:34px}
+.dchip{display:inline-flex;align-items:center;gap:6px;background:rgba(184,135,43,.18);border:1px solid var(--acc2);border-radius:999px;padding:6px 8px 6px 12px;font-weight:600}
+.dchip button{background:none;border:0;color:var(--mut);font-size:15px;padding:0 4px}
 </style>
 </head>
 <body>
@@ -110,6 +163,7 @@ select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);b
 <div class="ov" id="ovTh"><div class="sheet" id="shTh"></div></div>
 <div class="ov" id="ovSet"><div class="sheet" id="shSet"></div></div>
 <div class="ov" id="ovMark"><div class="sheet" id="shMark"></div></div>
+<div class="ov dlgov" id="ovDlg"><div class="dlg" id="dlgBox"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="data.js"></script>
@@ -126,18 +180,33 @@ const DEF={font:22,theme:'auto',marks:[],last:{},halacha:[{n:'קיצור שו"ע
 let S;
 try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('siddur')||'{}'))}catch(e){S=Object.assign({},DEF)}
 const save=()=>{try{localStorage.setItem('siddur',JSON.stringify(S))}catch(e){}};
+function dlg(o){return new Promise(res=>{
+  const ov=$('#ovDlg'),box=$('#dlgBox');
+  const fl=(o.fields||[]).map(f=>'<label class="df"><span>'+esc(f.label||'')+'</span>'+(f.type==='select'?'<select id="df_'+f.id+'">'+f.options.map(x=>'<option value="'+esc(x[0])+'"'+(String(x[0])===String(f.value)?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>':'<input id="df_'+f.id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'" placeholder="'+esc(f.placeholder||'')+'">')+'</label>').join('');
+  box.innerHTML=(o.title?'<h3>'+esc(o.title)+'</h3>':'')+(o.msg?'<p class="dm">'+esc(o.msg)+'</p>':'')+fl+(o.body||'')+
+    '<div class="dbtns">'+(o.cancel===false?'':'<button class="btn sec" id="dlgNo">'+esc(o.cancel||'ביטול')+'</button>')+'<button class="btn'+(o.danger?' del':'')+'" id="dlgOk">'+esc(o.ok||'אישור')+'</button></div>';
+  ov.classList.add('on');if(o.onMount)o.onMount(box);
+  const kd=e=>{if(e.key==='Escape')close(null);else if(e.key==='Enter'&&!o.noEnter&&e.target.tagName!=='BUTTON')ok()};
+  const close=v=>{ov.classList.remove('on');ov.onclick=null;document.removeEventListener('keydown',kd);res(v)};
+  const ok=()=>{let v=true;if(o.fields&&o.fields.length){v={};o.fields.forEach(f=>v[f.id]=$('#df_'+f.id).value)}
+    if(o.collect){v=o.collect(box);if(v===false)return}close(v)};
+  document.addEventListener('keydown',kd);
+  $('#dlgOk').onclick=ok;const no=$('#dlgNo');if(no)no.onclick=()=>close(null);
+  ov.onclick=e=>{if(e.target===ov)close(null)};
+  const fi=box.querySelector('input,select');if(fi&&!o.noFocus)setTimeout(()=>fi.focus(),60);
+})}
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
 
 /* ---------- books ---------- */
 const sec=n=>D.findIndex(s=>s.title===n);
 const BOOKS=[
  {id:'bsh',name:'ברכות השחר',sub:'מודה אני, ברכות השחר, ברכות התורה',secs:['Preparatory Prayers']},
- {id:'shach',name:'תפילת שחרית',sub:'מפתיחת אליהו ועד עלינו',secs:['Weekday Shacharit','Additions for Shacharit']},
+ {id:'shach',name:'תפילת שחרית',sub:'',secs:['Weekday Shacharit','Additions for Shacharit']},
  {id:'bentch',name:'ברכת המזון',sub:'',secs:['Post Meal Blessing']},
- {id:'chatzot',name:'תיקון חצות',sub:'תיקון רחל ואחריו תיקון לאה',secs:['The Midnight Rite'],more:0},
+ {id:'chatzot',name:'תיקון חצות',sub:'',secs:['The Midnight Rite'],more:0},
  {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],pre:['Weekday Shacharit|Petichat Eliyahu']},
  {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit']},
- {id:'mayin',name:'ברכת מעין שלוש',sub:'על המחיה',secs:['Al Hamihya'],more:1},
+ {id:'mayin',name:'ברכת מעין שלוש',sub:'',secs:['Al Hamihya'],more:1},
  {id:'bed',name:'קריאת שמע שעל המיטה',sub:'',secs:['Bedtime Shema'],more:1},
  {id:'moon',name:'ברכת הלבנה',sub:'',secs:['Blessing of the Moon'],more:1},
  {id:'misc',name:'ברכות ותפילות שונות',sub:'תפילת הדרך ועוד',secs:['Assorted Blessings and Prayers'],more:1},
@@ -174,19 +243,21 @@ function renderHome(){
   $('#ttl').textContent='הסידור שלי';$('#bBack').classList.add('hide');
   $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
   let h='';
-  const lastId=S.lastBook;
-  if(lastId&&book(lastId)&&S.last[lastId]){const b=book(lastId),l=S.last[lastId],p=partOf(b,l.k);
-    h+=`<button class="resume" data-resume="${lastId}">▶ המשך: ${esc(b.name)}<small>${p?esc(p.he):''}</small></button>`}
-  if(S.th&&S.th.cur){const it=S.th.cur.seq[S.th.cur.i];h+='<button class="resume" data-th="homeresume">▶ המשך תהילים: מזמור '+heb(it.c)+'<small>'+esc(S.th.cur.label||'')+'</small></button>'}
+  const la=S.lastAct;
+  if(la&&!la.dis){let txt='',act='';
+    if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך: '+book(la.id).name;act='data-resume="'+la.id+'"'}
+    else if(la.t==='th'&&S.th&&S.th.cur){txt='המשך תהילים: מזמור '+heb(S.th.cur.seq[S.th.cur.i].c);act='data-th="homeresume"'}
+    if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
   if(S.marks.length){h+='<h2 class="sec">הסימניות שלי</h2><div class="chips">'+
     S.marks.map((m,i)=>`<button class="chip star" data-m="${i}">★ ${esc(m.label)}</button>`).join('')+'</div>'}
-  h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+'<button class="card" data-th="open"><b>תהילים</b><small>קריאה, חלוקות וסימון קראתי</small></button>'+BOOKS.filter(b=>!b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
+  h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+'<button class="card" data-th="open"><b>תהילים</b><small>קריאה, חלוקות וסימון</small></button>'+BOOKS.filter(b=>!b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
   h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
   $('#home').innerHTML=h;
 }
 $('#home').addEventListener('click',e=>{
   const t=e.target.closest('button,.p');if(!t)return;
-  if(t.dataset.th==='open')openTh();
+  if(t.dataset.rsx){S.lastAct.dis=true;save();renderHome()}
+  else if(t.dataset.th==='open')openTh();
   else if(t.dataset.th==='homeresume'){T().inRead=true;openTh()}
   else if(t.dataset.resume){const l=S.last[t.dataset.resume];openBook(t.dataset.resume,l.k,l.para)}
   else if(t.dataset.m!==undefined)goMark(S.marks[+t.dataset.m]);
@@ -196,7 +267,7 @@ $('#home').addEventListener('click',e=>{
 /* ---------- reader ---------- */
 let cur=null;
 function openBook(id,k,para,fresh){
-  const b=book(id);cur={id};S.lastBook=id;S.open=id;save();
+  const b=book(id);cur={id};S.lastBook=id;S.lastAct={t:'b',id:id};S.open=id;save();
   $('#home').classList.add('hide');const r=$('#reader');r.classList.remove('hide');$('#fab').classList.remove('hide');
   $('#ttl').textContent=b.name;$('#bBack').classList.remove('hide');
   let h='',lastGrp=null;
@@ -303,7 +374,7 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
   if(t.id==='fm'||t.id==='fp'){S.font=Math.min(40,Math.max(14,S.font+(t.id==='fp'?2:-2)));save();applyTheme();$('#fv').textContent=S.font}
   else if(t.dataset.th){S.theme=t.dataset.th;save();applyTheme();re()}
   else if(t.dataset.rm!==undefined){S.marks.splice(+t.dataset.rm,1);save();re();paintMarks();if(!cur)renderHome()}
-  else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];const v=prompt('שם חדש:',m.label);if(v){m.label=v;save();re();if(!cur)renderHome()}}
+  else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמור'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();re();if(!cur)renderHome()}})}
   else if(t.dataset.up!==undefined){const i=+t.dataset.up;if(i>0){[S.marks[i-1],S.marks[i]]=[S.marks[i],S.marks[i-1]];save();re();if(!cur)renderHome()}}
   else if(t.id==='cl'){$('#ovSet').classList.remove('on');if(!cur)renderHome()}
   else if(t.id==='exp'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='siddur-backup.json';a.click()}
