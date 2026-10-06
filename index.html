@@ -38,6 +38,7 @@ h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
 .ph.col .pl{color:var(--acc2);font-weight:700;margin-left:4px}
 .ph.sm{font-size:13px;font-weight:400;padding:4px 10px;margin:12px 0 6px}
 .pb.hide{display:none}
+.pb.tight .para{line-height:1.45;padding:2px 4px}
 .closeb{display:block;margin:8px auto 4px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 18px;font-size:13px;color:var(--mut)}
 .grp{margin:26px 0 0;text-align:center;color:var(--mut);font-size:14px}
 .para{padding:6px 4px;line-height:1.85;border-radius:8px;scroll-margin-top:70px}
@@ -75,7 +76,7 @@ input[type=text],input[type=number]{width:100%;padding:11px;border-radius:10px;b
 
 <main id="home"></main>
 <div id="reader" class="hide"></div>
-<div class="fab hide" id="fab"><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
+<div class="fab hide" id="fab"><button id="bTop" aria-label="לראש הדף">⬆</button><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
 
 <div class="ov" id="ovJump"><div class="sheet" id="shJump"></div></div>
 <div class="ov" id="ovSet"><div class="sheet" id="shSet"></div></div>
@@ -118,7 +119,6 @@ BOOKS.forEach(b=>{
 });
 /* קטעים שתמיד נפתחים סגורים: ח = כל החלק, פ = פסקה בודדת */
 const COLLAPSE_PARTS=['Weekday Shacharit|Petichat Eliyahu','Weekday Shacharit|Order of Talit','Weekday Shacharit|Order of Tefillin'];
-const COLLAPSE_PARAS={'Weekday Shacharit|Morning Prayer':{1:'נוסח "יזהר כל אדם"'}};
 const book=id=>BOOKS.find(b=>b.id===id);
 const partOf=(b,k)=>b.parts.find(p=>p.k===k);
 
@@ -157,13 +157,14 @@ function openBook(id,k,para,fresh){
   let h='',lastGrp=null;
   b.parts.forEach(p=>{
     if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp">— ${esc(p.grp)} —</div>`;lastGrp=p.grp}
-    const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), cq=COLLAPSE_PARAS[pk]||{};
-    const tog=(t)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide">`, cls='<button class="closeb">− סגור</button></div>';
+    const pk=D[p.si].title+'|'+D[p.si].parts[p.pi].title, cp=COLLAPSE_PARTS.includes(pk), blocks=D[p.si].parts[p.pi].blocks||[];
+    const tog=(t,tight)=>`<div class="ph sm col"><span class="pl">＋</span> ${esc(t)}</div><div class="pb hide${tight?' tight':''}">`, cls='<button class="closeb">− סגור</button></div>';
     if(cp)h+=tog(p.he).replace('<div class="ph sm col">','<div class="ph sm col" id="p'+p.k+'">');
     else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
     D[p.si].parts[p.pi].paras.forEach((t,i)=>{
-      const para=`<div class="para" id="q${p.k}_${i}" data-k="${p.k}" data-i="${i}">${t}</div>`;
-      h+=cq[i]?tog(cq[i])+para+cls:para});
+      const bs=blocks.find(x=>x.from===i);if(bs)h+=tog(bs.title,bs.tight);
+      h+=`<div class="para" id="q${p.k}_${i}" data-k="${p.k}" data-i="${i}">${t}</div>`;
+      if(blocks.some(x=>x.to===i))h+=cls});
     if(cp)h+=cls;
   });
   r.innerHTML=h;applyTheme();paintMarks();
@@ -200,6 +201,7 @@ let selEl=null;
 $('#reader').addEventListener('click',e=>{
   const p=e.target.closest('.para');if(!p)return;
   if(selEl)selEl.classList.remove('sel');selEl=p;p.classList.add('sel')});
+$('#bTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 $('#bMark').onclick=()=>{
   const e=selEl||topPara();if(!e){return}
   const b=book(cur.id),part=partOf(b,e.dataset.k);
