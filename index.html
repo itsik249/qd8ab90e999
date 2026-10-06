@@ -181,6 +181,8 @@ const DEF={font:22,theme:'auto',marks:[],last:{},halacha:[{n:'קיצור שו"ע
 let S;
 try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('siddur')||'{}'))}catch(e){S=Object.assign({},DEF)}
 const save=()=>{try{localStorage.setItem('siddur',JSON.stringify(S))}catch(e){}};
+/* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
+const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
   const fl=(o.fields||[]).map(f=>'<label class="df"><span>'+esc(f.label||'')+'</span>'+(f.type==='select'?'<select id="df_'+f.id+'">'+f.options.map(x=>'<option value="'+esc(x[0])+'"'+(String(x[0])===String(f.value)?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>':'<input id="df_'+f.id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'" placeholder="'+esc(f.placeholder||'')+'">')+'</label>').join('');
@@ -245,7 +247,7 @@ function renderHome(){
   $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
   let h='';
   const la=S.lastAct;
-  if(la&&!la.dis){let txt='',act='';
+  if(SHOW_RESUME&&la&&!la.dis){let txt='',act='';
     if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך איפה שהפסקת: '+book(la.id).name;act='data-resume="'+la.id+'"'}
     else if(la.t==='th'&&S.th&&S.th.cur){txt='המשך איפה שהפסקת: תהילים · מזמור '+heb(S.th.cur.seq[S.th.cur.i].c);act='data-th="homeresume"'}
     if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
