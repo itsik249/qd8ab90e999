@@ -40,6 +40,7 @@ h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
 .ph.col .pl{color:var(--acc2);font-weight:700;margin-left:4px}
 .ph.sm{font-size:13px;font-weight:400;padding:4px 10px;margin:12px 0 6px}
 .pb.hide{display:none}
+.para.tp{line-height:1.4;padding:2px 4px}
 .pb.tight .para{line-height:1.45;padding:2px 4px}
 .closeb{display:block;margin:8px auto 4px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 18px;font-size:13px;color:var(--mut)}
 .grp{margin:36px 0 6px;padding-bottom:14px;text-align:center;font-family:'Frank Ruhl Libre','David Libre',Georgia,serif;font-weight:900;font-size:1.5em;line-height:1.3;color:var(--brown);background:linear-gradient(90deg,transparent,var(--acc2),transparent) bottom/70% 2px no-repeat}
@@ -107,8 +108,8 @@ const BOOKS=[
  {id:'shach',name:'תפילת שחרית',sub:'מפתיחת אליהו ועד עלינו',secs:['Weekday Shacharit','Additions for Shacharit']},
  {id:'bentch',name:'ברכת המזון',sub:'',secs:['Post Meal Blessing']},
  {id:'chatzot',name:'תיקון חצות',sub:'תיקון רחל ואחריו תיקון לאה',secs:['The Midnight Rite'],more:0},
- {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],pre:['Weekday Shacharit|Petichat Eliyahu'],more:1},
- {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit'],more:1},
+ {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],pre:['Weekday Shacharit|Petichat Eliyahu']},
+ {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit']},
  {id:'mayin',name:'ברכת מעין שלוש',sub:'על המחיה',secs:['Al Hamihya'],more:1},
  {id:'bed',name:'קריאת שמע שעל המיטה',sub:'',secs:['Bedtime Shema'],more:1},
  {id:'omer',name:'ספירת העומר',sub:'',secs:['Counting of the Omer'],more:1},
@@ -131,6 +132,11 @@ const partOf=(b,k)=>b.parts.find(p=>p.k===k);
 (function(){if(S.dv>=2)return;const fix=o=>{if(!o||o.k==null)return;const [si,pi]=String(o.k).split('.').map(Number);
   const p=D[si]&&D[si].parts[pi];if(p&&p.trim)o.para=Math.max(0,o.para-p.trim)};
   S.marks.forEach(fix);Object.values(S.last||{}).forEach(fix);S.dv=2;save()})();
+/* תיקון עצמי: אם פסקה זזה בגלל עריכת הטקסט, הסימנייה מחפשת אותה לפי תחילת הטקסט */
+(function(){const norm=t=>t.replace(/<[^>]*>/g,'').trim().slice(0,30);let ch=false;
+  S.marks.forEach(m=>{if(!m.sn)return;const [si,pi]=String(m.k).split('.').map(Number),p=D[si]&&D[si].parts[pi];if(!p)return;
+    if(p.paras[m.para]&&norm(p.paras[m.para])===m.sn)return;const j=p.paras.findIndex(t=>norm(t)===m.sn);if(j>=0){m.para=j;ch=true}});
+  if(ch)save()})();
 
 /* ---------- theme ---------- */
 function applyTheme(){document.documentElement.dataset.t=S.theme;document.documentElement.style.setProperty('--fs',S.font+'px');
@@ -173,7 +179,7 @@ function openBook(id,k,para,fresh){
     else h+=`<div class="ph" id="p${p.k}">${esc(p.he)}</div>`;
     D[p.si].parts[p.pi].paras.forEach((t,i)=>{
       const bs=blocks.find(x=>x.from===i);if(bs)h+=tog(bs.title,bs.tight);
-      h+=`<div class="para" id="q${p.k}_${i}" data-k="${p.k}" data-i="${i}">${t}</div>`;
+      h+=`<div class="para${(D[p.si].parts[p.pi].tightParas||[]).includes(i)?' tp':''}" id="q${p.k}_${i}" data-k="${p.k}" data-i="${i}">${t}</div>`;
       if(blocks.some(x=>x.to===i))h+=cls});
     if(cp)h+=cls;
   });
@@ -226,7 +232,7 @@ $('#bMark').onclick=()=>{
   $('#ovMark').classList.add('on');
   $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
   $('#mkSave').onclick=()=>{const label=$('#mkLabel').value.trim()||part.he;
-    const m={book:cur.id,k:e.dataset.k,para:+e.dataset.i,label};
+    const m={book:cur.id,k:e.dataset.k,para:+e.dataset.i,label,sn:e.textContent.trim().slice(0,30)};
     if(ex>=0)S.marks[ex]=m;else S.marks.push(m);save();paintMarks();$('#ovMark').classList.remove('on');toast('נשמר ★')};
   if(ex>=0)$('#mkDel').onclick=()=>{S.marks.splice(ex,1);save();paintMarks();$('#ovMark').classList.remove('on')};
 };
