@@ -48,8 +48,9 @@ function openTh(){
 function thNav(s){thStack.push(s);history.pushState({th:1},'');thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
   if(!thStack.length){thLeave();return}thRender();window.scrollTo(0,0)}
-function thLeave(){thOpen=false;S.open=null;save();$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
+function thLeave(){thOpen=false;S.open=null;save();$('#bBack').textContent='‹ בית';$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
 function thRender(){const s=thStack[thStack.length-1];
+  $('#bBack').textContent=s.v==='menu'?'‹ בית':'‹ חזרה';
   if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else thRead()}
 
 /* ---- עמוד ראשי של תהילים ---- */
@@ -102,10 +103,13 @@ function thRead(){
     extra='<div class="agebox"><button class="btn" style="width:100%" id="thSaveAge">💾 שמירה במזמורים אישיים</button></div>'+
       (b?'<p class="thn" style="text-align:center">תאריך הלידה העברי שלך: '+fmtBirth(b)+'. המזמור מתעדכן אוטומטית בכל יום הולדת עברי.</p>'
         :(t.birthNo?'':'<div class="sugg"><b>🎂 עדכון אוטומטי בכל שנה?</b><p>אפשר להגדיר תאריך לידה עברי, ובכל יום הולדת עברי ייפתח המזמור של השנה החדשה, בלי צורך לחשב.</p><div class="pbar" style="margin:0"><button class="btn" style="flex:1" id="thSetBirth2">כן, להגדיר</button><button class="btn sec" id="thNoBirth">לא, תודה</button></div></div>'))}
-  $('#th').innerHTML='<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
+  const strip=cu.seq.length>1?'<div class="cs" id="thStrip">'+cu.seq.map((x,i)=>'<button class="cb'+(i===cu.i?' on':'')+(itRead(x)?' rd':'')+'" data-cj="'+i+'">'+itemLabel(x)+'</button>').join('')+'</div>':'';
+  $('#th').innerHTML=strip+'<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
     '<div class="thctx">'+esc(cu.label||'')+(cu.seq.length>1?' · '+hn(cu.i+1)+' מתוך '+hn(cu.seq.length):'')+'</div>'+
     '<p class="thv">'+text+'</p><div class="pbar"><button class="btn sec" style="flex:1" id="thJump">☰ מזמור אחר</button></div>'+extra+'</div>';
   $('#thbar').classList.toggle('hide',!!cu.noMark);
+  document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px');
+  const on=$('#thStrip .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
   if(!cu.noMark)thBarState();
 }
 function thBarState(){const cu=T().cur,it=cu.seq[cu.i],rd=!!T().read[keyOf(it)];
@@ -179,6 +183,7 @@ document.addEventListener('click',async e=>{
   if(d.md==='today'){const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);setSub('mt',it,'החלק של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu();return}
   if(d.ss){if(isAfterSunset())delete T().ss;else T().ss=new Date().toDateString();save();thUI.sub=null;thUI.ctx=null;thMenu();return}
   if(d.cs!==undefined&&thUI.ctx){thStartRead(thUI.ctx.items,+d.cs,thUI.ctx.label);return}
+  if(d.cj!==undefined){const cu=T().cur;cu.i=+d.cj;save();thRead();window.scrollTo(0,0);return}
   if(id==='thGo'){thGoCh(parseCh($('#thIn').value));return}
   if(id==='thGo2'){thGoCh(parseCh($('#thIn2').value),true);return}
   if(id==='thReset'){const v=await dlg({title:'איפוס סימונים',msg:'למחוק את כל סימוני "קראתי"?',ok:'כן, לאפס',danger:true});if(v){T().read={};save();thMenu()}return}
