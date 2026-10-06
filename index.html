@@ -144,6 +144,14 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .cb.rd{background:linear-gradient(135deg,#fff3cc,#efd48a);border-color:var(--acc2)}
 .cb.on{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);color:var(--on-acc);border-color:transparent}
 .thback{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:7;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));color:var(--brown);font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(40,35,20,.25)}
+.thcrumb{display:none}
+.crumbrow{display:none}
+@media(min-width:700px){
+  .thback{display:none!important}
+  .crumbrow{display:block;margin:6px 0 0}
+  .thcrumb{display:inline-block;padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));color:var(--brown);font-size:15px;font-weight:700;box-shadow:var(--sh)}
+  .thbar{max-width:760px;margin:0 auto;border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0}
+}
 .thback.low{bottom:calc(18px + env(safe-area-inset-bottom))}
 .thr{padding-bottom:40px}.thr.mark{padding-bottom:140px}
 .dlgov{align-items:center;justify-content:center;padding:16px;background:rgba(30,15,5,.5);backdrop-filter:blur(3px)}

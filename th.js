@@ -6,7 +6,7 @@ const MNAMES={1:'תשרי',2:'חשוון',3:'כסלו',4:'טבת',5:'שבט',6:'
 const MKEY={Tishri:1,Heshvan:2,Kislev:3,Tevet:4,Shevat:5,'Adar I':6,Adar:7,'Adar II':7,Nisan:8,Iyar:9,Sivan:10,Tamuz:11,Av:12,Elul:13};
 let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null},thGoingHome=false;
 function thBackBtn(show){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
-  b.textContent=thUI.ctx?'↩ חזרה לרשימה':'↩ חזרה לתהילים';
+  const lbl=thUI.ctx?'↩ חזרה לרשימת המזמורים':'↩ חזרה לתהילים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
   const cu=T().cur;b.classList.toggle('low',!!(cu&&cu.noMark))}
 /* כפתור הבית בכותרת: יוצא מתהילים בבת אחת, בלי להשאיר היסטוריה */
 function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n)}
@@ -110,7 +110,7 @@ function thRead(){
       (b?'<p class="thn" style="text-align:center">תאריך הלידה העברי שלך: '+fmtBirth(b)+'. המזמור מתעדכן אוטומטית בכל יום הולדת עברי.</p>'
         :(t.birthNo?'':'<div class="sugg"><b>🎂 עדכון אוטומטי בכל שנה?</b><p>אפשר להגדיר תאריך לידה עברי, ובכל יום הולדת עברי ייפתח המזמור של השנה החדשה, בלי צורך לחשב.</p><div class="pbar" style="margin:0"><button class="btn" style="flex:1" id="thSetBirth2">כן, להגדיר</button><button class="btn sec" id="thNoBirth">לא, תודה</button></div></div>'))}
   const strip=cu.seq.length>1?'<div class="cs" id="thStrip">'+cu.seq.map((x,i)=>'<button class="cb'+(i===cu.i?' on':'')+(itRead(x)?' rd':'')+'" data-cj="'+i+'">'+itemLabel(x)+'</button>').join('')+'</div>':'';
-  $('#th').innerHTML=strip+'<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
+  $('#th').innerHTML=strip+'<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="crumbrow"><button class="thcrumb" id="thCrumb">↩ חזרה</button></div><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
     '<div class="thctx">'+esc(cu.label||'')+(cu.seq.length>1?' · '+hn(cu.i+1)+' מתוך '+hn(cu.seq.length):'')+'</div>'+
     '<p class="thv">'+text+'</p><div class="pbar"><button class="btn sec" style="flex:1" id="thJump">☰ מזמור אחר</button></div>'+extra+'</div>';
   $('#thbar').classList.toggle('hide',!!cu.noMark);thBackBtn(true);
@@ -207,7 +207,7 @@ document.addEventListener('click',async e=>{
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
-  if(id==='thBackF'){history.back();return}
+  if(id==='thBackF'||id==='thCrumb'){history.back();return}
   if(id==='thJump'){thJumpSheet();return}
   if(id==='thPrev'){const cu=T().cur;if(cu.i>0){cu.i--;save();thRead();window.scrollTo(0,0)}return}
   if(id==='thRd'){const cu=T().cur,k=keyOf(cu.seq[cu.i]),on=!T().read[k];thMark(on);thBarState();toast(on?'סומן: נקרא ✓':'הסימון בוטל');return}
