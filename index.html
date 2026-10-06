@@ -122,6 +122,11 @@ const COLLAPSE_PARTS=['Weekday Shacharit|Petichat Eliyahu','Weekday Shacharit|Or
 const book=id=>BOOKS.find(b=>b.id===id);
 const partOf=(b,k)=>b.parts.find(p=>p.k===k);
 
+/* מיגרציה: הסרת שורת הכותרת הכפולה הזיזה פסקאות ב-1 */
+(function(){if(S.dv>=2)return;const fix=o=>{if(!o||o.k==null)return;const [si,pi]=String(o.k).split('.').map(Number);
+  const p=D[si]&&D[si].parts[pi];if(p&&p.trim)o.para=Math.max(0,o.para-p.trim)};
+  S.marks.forEach(fix);Object.values(S.last||{}).forEach(fix);S.dv=2;save()})();
+
 /* ---------- theme ---------- */
 function applyTheme(){document.documentElement.dataset.t=S.theme;document.documentElement.style.setProperty('--fs',S.font+'px');
   const r=$('#reader');if(r)r.style.fontSize=S.font+'px'}
