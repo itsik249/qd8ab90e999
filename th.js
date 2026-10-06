@@ -61,7 +61,7 @@ function thRender(){const s=thStack[thStack.length-1];
   thBackBtn(s.v==='read');
   if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else thRead()}
 
-function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'החלק של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
+function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
 /* ---- עמוד ראשי של תהילים ---- */
 function chipsHTML(ctx){const items=ctx.items,fu=items.findIndex(x=>!itRead(x));
   return '<div class="thn">'+esc(ctx.title)+'</div><div class="pbar"><button class="btn" style="flex:1" data-cs="'+Math.max(0,fu)+'">'+(fu>0?'המשך מהמזמור שעוד לא נקרא':'להתחיל לקרוא')+'</button></div>'+
@@ -77,7 +77,7 @@ function thPanel(){const t=T(),o=thUI.open,hd=hebToday();let h='';
   else if(o==='month'){
     h+='<p class="thn" style="margin:0 2px 2px;font-size:16px;color:var(--fg)"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+'</b>'+(isAfterSunset()?' · מהערב':'')+(hd.short?'<br><span style="font-size:13px;color:var(--mut)">בחודש חסר קוראים גם את חלק ל׳</span>':'')+'</p>'+
       '<p class="thn" style="margin:2px 2px 10px;font-size:14px;line-height:1.5;color:var(--fg);opacity:.75">היום העברי מתחיל בשקיעה ולא בחצות. אם השמש כבר שקעה, יש ללחוץ על <b>🌙 כבר ערב</b> כדי לראות את התאריך של הלילה.</p>'+
-      '<div class="pbar" style="margin:0 0 10px"><button class="btn" style="flex:1" data-md="today">▶ החלק של היום</button><button class="btn sec" data-ss="1">'+(isAfterSunset()?'✓ ':'🌙 ')+'כבר ערב</button></div>'+
+      '<div class="pbar" style="margin:0 0 10px"><button class="btn" style="flex:1" data-md="today">▶ התהילים של היום</button><button class="btn sec" data-ss="1">'+(isAfterSunset()?'✓ ':'🌙 ')+'כבר ערב</button></div>'+
       '<div class="stg d6">'+Array.from({length:30},(_,i)=>'<button class="stl'+(thUI.sub==='m'+(i+1)?' on':'')+(i+1===hd.day?' today':'')+'" data-sub="m'+(i+1)+'">'+hebPlain(i+1)+'</button>').join('')+'</div>'}
   else if(o==='age'){const b=t.birth,a=curAge();
     h+='<p class="thn" style="margin-top:0">אפשר להקליד גיל כדי לפתוח את המזמור של השנה שאחריו.</p><div class="thq" style="margin-top:0"><input type="number" id="thAge" inputmode="numeric" min="0" max="149" placeholder="בן/בת כמה?"><button class="btn" id="thAgeGo">אישור</button></div>'+
@@ -215,7 +215,7 @@ document.addEventListener('click',async e=>{
     else if(k[0]==='w')setSub(k,range(TH_WEEK[n][1],TH_WEEK[n][2]),TH_WEEK[n][0]+' · מזמורים '+heb(TH_WEEK[n][1])+'–'+heb(TH_WEEK[n][2]));
     else if(k[0]==='m')setSub(k,monthItems(n),'יום '+heb(n)+' בחודש · '+monthText(n));
     thMenu();return}
-  if(d.md==='today'){const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);setSub('mt',it,'החלק של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu();return}
+  if(d.md==='today'){const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu();return}
   if(d.ss){if(isAfterSunset())delete T().ss;else T().ss=new Date().toDateString();save();thUI.sub=null;thUI.ctx=null;thMenu();return}
   if(d.cs!==undefined&&thUI.ctx){thStartRead(thUI.ctx.items,+d.cs,thUI.ctx.label);return}
   if(d.cj!==undefined){const cu=T().cur;cu.i=+d.cj;save();thRead();window.scrollTo(0,0);return}

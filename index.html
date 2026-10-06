@@ -137,7 +137,7 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .pli button{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:14px;color:var(--fg)}
 .pli button.go{background:linear-gradient(135deg,var(--acc),var(--accd));color:var(--on-acc);border:0;font-weight:600}
 .minires{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
-.mx{flex:none;width:42px;padding:0!important;font-size:15px!important;color:var(--mut)!important}
+.minires .mx{flex:none;width:36px;height:36px;padding:0;border-radius:50%;font-size:14px;line-height:1;color:var(--mut);display:flex;align-items:center;justify-content:center}
 .minires button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;color:var(--brown);font-weight:600}
 .sugg,.agebox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;box-shadow:var(--sh)}
 .sugg p{margin:6px 0 12px;color:var(--mut);font-size:14px}
@@ -291,7 +291,6 @@ function openMenu(){
     it('th','<path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"/>','תהילים')+
     it('marks','<path d="M6 3h12v18l-6-4-6 4z"/>','הסימניות שלי')+
     it('settings','<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/>','הגדרות ותצוגה')+
-    it('backup','<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>','גיבוי וייבוא')+
     it('about','<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11v5"/>','אודות');
   $('#ovMenu').classList.add('on')}
 function openMarks(){
@@ -382,7 +381,7 @@ function renderHome(){
   $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
   $('#tabbar').classList.remove('hide');$('#bBack').classList.add('hide');
   let h='';
-  {const hd=hebToday(),py=hebParts(new Date()).y;h+='<div class="dcard"><div class="dt"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+'</b><small>ה׳'+heb(py%1000)+'</small></div><button class="dgo" data-th="today">תהילים<br>של היום</button></div>'}
+  {const hd=hebToday(),py=hebParts(new Date()).y;h+='<div class="dcard"><div class="dt"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+'</b><small>ה׳'+heb(py%1000)+'</small></div></div>'}
   const la=S.lastAct;
   if(SHOW_RESUME&&la&&!la.dis){let txt='',act='';
     if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך איפה שהפסקת: '+book(la.id).name;act='data-resume="'+la.id+'"'}
