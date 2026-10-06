@@ -75,6 +75,26 @@ input[type=text],input[type=number]{width:100%;padding:11px;border-radius:10px;b
 .hl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:20px}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:999px;z-index:30;display:none;font-size:14px}
 .hide{display:none!important}
+.thq{display:flex;gap:8px;margin:10px 0}.thq input{flex:1}
+select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-bottom:6px}
+.thp{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:14px;color:var(--mut)}
+.thpb{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.thpb i{display:block;height:100%;background:var(--acc2)}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 12px;padding-bottom:4px}
+.tab{flex:none;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tab.on{background:var(--acc);color:#fff;border-color:var(--acc)}:root[data-t=dark] .tab.on{color:#12141a}
+.grid1{display:grid;gap:10px}.card.today{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}
+.dgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}.dgrid.wide{grid-template-columns:repeat(3,1fr)}
+.dbtn{padding:12px 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:16px}
+.dbtn.today{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}.dbtn.rd{background:rgba(184,135,43,.18)}
+.thn{color:var(--mut);font-size:14px;margin:10px 2px}
+.thr{max-width:760px;margin:auto;padding:4px 6px 140px}
+.tht{text-align:center;font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:900;font-size:1.5em;color:var(--brown);margin:14px 0 2px}.tht small{font-size:.55em;color:var(--mut);font-weight:400}
+.thctx{text-align:center;color:var(--mut);font-size:13px;margin-bottom:12px}
+.thv{line-height:2;margin:10px 0 24px}.tv{color:var(--acc2);font-size:.6em;margin:0 8px 0 5px;font-weight:700}
+.thbar{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}
+.thbar button{flex:1;padding:14px 6px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px}
+.thbar button#thNext{flex:1.6;background:var(--acc);color:#fff;border-color:var(--acc)}:root[data-t=dark] .thbar button#thNext{color:#12141a}
+.thbar button#thRd.on{background:rgba(184,135,43,.25);border-color:var(--acc2)}.thbar button:disabled{opacity:.4}
 </style>
 </head>
 <body>
@@ -82,14 +102,19 @@ input[type=text],input[type=number]{width:100%;padding:11px;border-radius:10px;b
 
 <main id="home"></main>
 <div id="reader" class="hide"></div>
+<main id="th" class="hide"></main>
+<div class="thbar hide" id="thbar"><button id="thPrev">▸ הקודם</button><button id="thRd">✓ קראתי</button><button id="thNext">קראתי והמשך ◂</button></div>
 <div class="fab hide" id="fab"><button id="bTop" aria-label="לראש הדף">⬆</button><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
 
 <div class="ov" id="ovJump"><div class="sheet" id="shJump"></div></div>
+<div class="ov" id="ovTh"><div class="sheet" id="shTh"></div></div>
 <div class="ov" id="ovSet"><div class="sheet" id="shSet"></div></div>
 <div class="ov" id="ovMark"><div class="sheet" id="shMark"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="data.js"></script>
+<script src="tehillim.js"></script>
+<script src="th.js"></script>
 <script>
 const D=window.SIDDUR;
 const $=s=>document.querySelector(s);
@@ -147,20 +172,23 @@ function applyTheme(){document.documentElement.dataset.t=S.theme;document.docume
 function goMark(m){openBook(m.book,m.k,m.para)}
 function renderHome(){
   $('#ttl').textContent='הסידור שלי';$('#bBack').classList.add('hide');
-  $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#home').classList.remove('hide');
+  $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
   let h='';
   const lastId=S.lastBook;
   if(lastId&&book(lastId)&&S.last[lastId]){const b=book(lastId),l=S.last[lastId],p=partOf(b,l.k);
     h+=`<button class="resume" data-resume="${lastId}">▶ המשך: ${esc(b.name)}<small>${p?esc(p.he):''}</small></button>`}
+  if(S.th&&S.th.cur){const it=S.th.cur.seq[S.th.cur.i];h+='<button class="resume" data-th="homeresume">▶ המשך תהילים: מזמור '+heb(it.c)+'<small>'+esc(S.th.cur.label||'')+'</small></button>'}
   if(S.marks.length){h+='<h2 class="sec">הסימניות שלי</h2><div class="chips">'+
     S.marks.map((m,i)=>`<button class="chip star" data-m="${i}">★ ${esc(m.label)}</button>`).join('')+'</div>'}
-  h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+BOOKS.filter(b=>!b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
+  h+='<h2 class="sec">תפילות וברכות</h2><div class="grid">'+'<button class="card" data-th="open"><b>תהילים</b><small>קריאה, חלוקות וסימון קראתי</small></button>'+BOOKS.filter(b=>!b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
   h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more).map(b=>`<button class="card" data-b="${b.id}"><b>${esc(b.name)}</b>${b.sub?`<small>${esc(b.sub)}</small>`:''}</button>`).join('')+'</div>';
   $('#home').innerHTML=h;
 }
 $('#home').addEventListener('click',e=>{
   const t=e.target.closest('button,.p');if(!t)return;
-  if(t.dataset.resume){const l=S.last[t.dataset.resume];openBook(t.dataset.resume,l.k,l.para)}
+  if(t.dataset.th==='open')openTh();
+  else if(t.dataset.th==='homeresume'){T().inRead=true;openTh()}
+  else if(t.dataset.resume){const l=S.last[t.dataset.resume];openBook(t.dataset.resume,l.k,l.para)}
   else if(t.dataset.m!==undefined)goMark(S.marks[+t.dataset.m]);
   else if(t.dataset.b)openBook(t.dataset.b,null,null,true);
 });
@@ -203,8 +231,9 @@ function topPara(){
 let st;window.addEventListener('scroll',()=>{if(!cur||$('#reader').classList.contains('hide'))return;clearTimeout(st);
   st=setTimeout(()=>{const e=topPara();if(e){S.last[cur.id]={k:e.dataset.k,para:+e.dataset.i};save()}},300)},{passive:true});
 function leave(){cur=null;S.open=null;save();renderHome();window.scrollTo(0,0)}
-$('#bBack').onclick=()=>{if(history.state&&history.state.r)history.back();else leave()};
-window.addEventListener('popstate',()=>{if(cur)leave()});
+$('#bBack').onclick=()=>{if(thOpen){history.back();return}
+  if(history.state&&history.state.r)history.back();else leave()};
+window.addEventListener('popstate',()=>{if(thOpen)thPop();else if(cur)leave()});
 
 function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
 function reveal(el){
@@ -282,7 +311,7 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
 });
 
 applyTheme();history.replaceState({h:1},'');
-if(S.open&&book(S.open))openBook(S.open);else renderHome();
+if(S.open==='th')openTh();else if(S.open&&book(S.open))openBook(S.open);else renderHome();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
