@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 10';
+const APP_VERSION='7.10.2026 · 11';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -658,11 +658,7 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
 });
 
 applyTheme();if(!(history.state&&history.state.lv))history.replaceState({lv:0},'');
-const lastOpen=S.open;S.open=null;save();renderHome();
-/* פתיחה אחרי סגירה מלאה: הדפדפן מוסיף "עמוד קודם" רק אחרי נגיעה של המשתמש/ת. לכן שואלים בנגיעה, וכך החזרה של הטלפון תחזיר לבית */
-if(lastOpen==='th'||(lastOpen&&book(lastOpen))){
-  const nm=lastOpen==='th'?'תהילים':book(lastOpen).name;
-  dlg({title:'המשך מהמקום האחרון',msg:nm,ok:'המשך: '+nm,cancel:'לדף הבית',noFocus:true}).then(v=>{if(v){if(lastOpen==='th'){T().inRead=true;openTh(true)}else openBook(lastOpen)}})}
+S.open=null;save();renderHome(); /* אחרי סגירה ופתיחה מחדש תמיד מתחילים בדף הבית */
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
