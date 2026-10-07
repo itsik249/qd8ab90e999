@@ -263,6 +263,10 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 .doneb{background:linear-gradient(135deg,#fff3cc,#efd48a);border:1px solid var(--acc2);border-radius:14px;padding:12px;text-align:center;font-weight:800;color:var(--brown);margin:6px 0 10px}
 .doneb small{display:block;font-weight:600;font-size:12.5px;margin-top:2px;color:var(--mut)}
 .thacts{margin-top:8px}.thacts .btn{padding:10px 8px;font-size:14px}
+.pli{flex-wrap:wrap}.pli .pn{flex:1 1 100%}.pli button{flex:1 1 auto}.pli button:disabled{opacity:.35}
+.shic{display:none}.segnus{justify-content:center}.sn{max-width:220px}
+#reader[data-sp=tikkun] .tkc{margin:8px 0}
+.pli button{padding:9px 4px}.pli button[data-pl^="u"],.pli button[data-pl^="v"],.pli button[data-pl^="e"],.pli button[data-pl^="d"]{flex:0 0 38px;padding:9px 0}
 </style>
 </head>
 <body>
@@ -382,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 5';
+const APP_VERSION='7.10.2026 · 6';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -508,46 +512,43 @@ function openBook(id,k,para,fresh){
   updateNav();histSync();
 }
 /* ---- דפים מיוחדים: נשמת כל חי (בחירת נוסח), שירת הבריאה (עם אייקונים), תיקון הכללי ---- */
-const SP_ICON={'שמים':'🌌','ארץ':'🌍','גן עדן':'🌳','גיהנם':'🔥','מדבר':'🏜️','שדות':'🌾','מים':'💧','ימים':'🌊','נהרות':'🏞️','מעינות':'⛲',
- 'יום':'☀️','לילה':'🌙','שמש':'🌞','ירח':'🌛','כוכבים':'⭐','עבים':'☁️','ענני כבוד':'⛅','רוח':'🌬️','ברקים':'⚡','טל':'💧','גשמים':'🌧️',
- 'אילנות שבשדה':'🌳','גפן':'🍇','תאנה':'🌿','רמון':'🍎','תמר':'🌴','תפוח':'🍏','שבלת חטים':'🌾','שבלת שעורים':'🌾','שאר שבולים':'🌾','ירקות שבשדה':'🥬','דשאים':'🌱',
- 'תרנגול':'🐓','בקול ראשון':'🐓','בקול שני':'🐓','בקול שלישי':'🐓','בקול רביעי':'🐓','בקול חמישי':'🐓','בקול שישי':'🐓','בקול שביעי':'🐓','תרנגלת':'🐔','יונה':'🕊️','נשר':'🦅','עגור':'🦢','צפור':'🐦','סנונית':'🐦','טסית':'🐦','ציה':'🐦','רצפי':'🐦','חסידה':'🦢','עורב':'🐦','זרזיר':'🐦','אוז שבבית':'🦆','פרוגיות':'🐦','רחמה':'🐦','צפרת כרמים':'🐦','חסיל':'🦗','שממית':'🦎','זבוב':'🦟','תנינים':'🐊','לויתן':'🐋','דגים':'🐟','צפרדע':'🐸',
- 'בהמה דקה טהורה':'🐑','בהמה גסה טהורה':'🐄','בהמה דקה טמאה':'🐖','בהמה גסה טמאה':'🐪','גמל':'🐪','סוס':'🐎','פרד':'🐴','חמור':'🐴','שור':'🐂','חיות השדה':'🦌','צבי':'🦌','פיל':'🐘','אריה':'🦁','דב':'🐻','זאב':'🐺','שועל':'🦊','עכבר':'🐭','חתול':'🐱','ועכבר':'🐭',
- 'שרצים':'🐛','אלים שבשרצים':'🐛','נחש':'🐍','עקרב':'🦂','שבלול':'🐌','נמלה':'🐜','חלדה':'🐀','כלבים':'🐕'};
 const SP_HEB=['א','ב','ג','ד','ה','ו'];
+let nusSel=null; /* נשמת כל חי: הנוסח שנבחר (בכניסה לדף לא נפתח כלום) */
 function spNishmat(){
-  const vs=window.EXTRA.nishmat;let id=S.nusach||'mizrach';if(!vs.find(v=>v.id===id&&v.paras))id='mizrach';
-  const v=vs.find(x=>x.id===id);
+  const vs=window.EXTRA.nishmat,v=vs.find(x=>x.id===nusSel);
   return '<div class="grp"><span class="st">✦</span>נשמת כל חי<span class="st">✦</span></div>'+
-   '<div class="segnus" role="tablist">'+vs.map(x=>'<button class="sn'+(x.id===id?' on':'')+(x.paras?'':' off')+'" data-nus="'+x.id+'"'+(x.paras?'':' disabled')+'>'+esc(x.name)+(x.paras?'':'<small>בקרוב</small>')+'</button>').join('')+'</div>'+
-   v.paras.map((t,i)=>'<div class="para" id="qn_'+i+'" data-k="n.'+id+'" data-i="'+i+'">'+t+'</div>').join('')}
+   '<p class="thn" style="text-align:center;margin:0 0 6px">בחירת נוסח</p>'+
+   '<div class="segnus" role="tablist">'+vs.map(x=>'<button class="sn'+(x.id===nusSel?' on':'')+'" data-nus="'+x.id+'">'+esc(x.name)+'</button>').join('')+'</div>'+
+   (v?v.paras.map((t,i)=>'<div class="para" id="qn_'+i+'" data-k="n.'+v.id+'" data-i="'+i+'">'+t+'</div>').join(''):'')}
 function spShira(){
   const E=window.EXTRA.shira;
-  let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div>';
+  const tog=(t,id)=>'<div class="ph col lg" id="'+id+'"><span class="pl">＋</span> '+esc(t)+'</div><div class="pb hide">',cls='<button class="closeb">− סגירה</button></div>';
+  let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div><p class="thn" style="text-align:center;margin:0 0 6px">קריאה לפי פרק</p>';
   E.chapters.forEach((ch,ci)=>{
-    x+='<div class="ph" id="shc'+ci+'">פרק '+SP_HEB[ci]+'׳</div>';
+    x+=tog('פרק '+SP_HEB[ci]+'׳','shc'+ci);
     ch.forEach(it=>{
       if(!it.name){x+='<div class="para shnote"><small>'+esc(it.text)+'</small></div>';return}
-      const ic=SP_ICON[it.plain];
-      x+='<div class="shcard">'+(ic?'<div class="shic">'+ic+'</div>':'')+'<div class="shbody"><b class="shname">'+esc(it.name)+' <span class="shverb">'+esc(it.verb)+'</span></b><div class="shtxt">'+esc(it.text)+'</div></div></div>'});
-  });
-  x+='<div class="ph">'+esc(E.closing[0])+'</div>'+E.closing.slice(1).map(t=>'<div class="para">'+esc(t)+'</div>').join('');
+      x+='<div class="shcard"><div class="shbody"><b class="shname">'+esc(it.name)+' <span class="shverb">'+esc(it.verb)+'</span></b><div class="shtxt">'+esc(it.text)+'</div></div></div>'});
+    x+=cls});
+  x+=tog(E.closing[0],'shcl')+E.closing.slice(1).map(t=>'<div class="para">'+esc(t)+'</div>').join('')+cls;
   return x}
 const TIKKUN=[16,32,41,42,59,77,90,105,137,150];
 function spTikkun(){
-  const T=window.TEHILLIM;
+  const T=window.TEHILLIM,C=window.EXTRA.tikkunClose;
   let x='<div class="grp"><span class="st">✦</span>תיקון הכללי<span class="st">✦</span></div><p class="thn" style="text-align:center">עשרה מזמורים: '+TIKKUN.map(c=>heb(c)).join(', ')+'</p>';
   TIKKUN.forEach((c,i)=>{x+='<section id="tk'+i+'"><div class="ph">מזמור '+heb(c)+'</div><p class="thv">'+T[c-1].map((v,j)=>'<span class="tv">'+hebPlain(j+1)+'</span>'+esc(v)).join(' ')+'</p></section>'});
+  x+='<section id="tk10"><div class="ph">'+esc(C.title)+'</div>'+C.paras.map(p=>'<div class="para tkc">'+esc(p)+'</div>').join('')+'</section>';
   return x}
 function openSpecial(b){
   const r=$('#reader');
+  if(b.special==='nishmat'&&!cur.reopen)nusSel=null;
   let x=b.special==='nishmat'?spNishmat():b.special==='shira'?spShira():spTikkun();
-  if(b.special==='tikkun')x='<div class="cs" id="tkStrip">'+TIKKUN.map((c,i)=>'<button class="cb" data-tk="'+i+'">'+heb(c)+'</button>').join('')+'</div>'+x;
+  if(b.special==='tikkun')x='<div class="cs" id="tkStrip">'+TIKKUN.map((c,i)=>'<button class="cb" data-tk="'+i+'">'+heb(c)+'</button>').join('')+'<button class="cb" data-tk="10">תפילה</button></div>'+x;
   r.innerHTML=x;r.dataset.sp=b.special;applyTheme();$('#fab').classList.add('hide');window.scrollTo(0,0);
   document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px');
   updateNav();histSync()}
 document.addEventListener('click',e=>{
-  const n=e.target.closest('[data-nus]');if(n&&!n.disabled){S.nusach=n.dataset.nus;save();const b=book(cur&&cur.id);if(b&&b.special==='nishmat'){const y=window.scrollY;openSpecial(b);window.scrollTo(0,y)}return}
+  const n=e.target.closest('[data-nus]');if(n&&!n.disabled){nusSel=n.dataset.nus;const bk0=cur;if(bk0)bk0.reopen=1;const b=book(cur&&cur.id);if(b&&b.special==='nishmat'){const y=window.scrollY;openSpecial(b);window.scrollTo(0,y)}if(bk0)delete bk0.reopen;return}
   const tk=e.target.closest('[data-tk]');if(tk){const el=document.getElementById('tk'+tk.dataset.tk);if(el)el.scrollIntoView({block:'start'})}
 });
 function paintMarks(){

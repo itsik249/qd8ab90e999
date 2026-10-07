@@ -81,7 +81,7 @@ function setSub(key,items,title){thUI.edit=false;thUI.sub=key;thUI.ctx={items:it
 function listItems(l){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items.slice();if(!dyn&&l.sort)its.sort((a,b)=>a.c-b.c);return its}
 function persRow(l,i){const dyn=l.dyn&&T().birth,a=dyn?curAge():null,its=listItems(l);
   return '<div class="pli"><div class="pn"><b>'+esc(l.n)+'</b><small>'+(dyn?'מזמור '+heb(its[0].c)+' · מתעדכן אוטומטית (גיל '+a+')':its.map(x=>itemLabel(x)).join(' · '))+'</small></div>'+
-    '<button class="go" data-pl="r'+i+'">קריאה</button><button class="go2" data-pl="c'+i+'">רצופה</button><button data-pl="e'+i+'">✎</button><button data-pl="d'+i+'">✕</button></div>'}
+    '<button class="go" data-pl="r'+i+'">קריאה</button><button class="go2" data-pl="c'+i+'">רצופה</button><button data-pl="u'+i+'" aria-label="הזזה למעלה"'+(i===0?' disabled':'')+'>▲</button><button data-pl="v'+i+'" aria-label="הזזה למטה"'+(i===T().lists.length-1?' disabled':'')+'>▼</button><button data-pl="e'+i+'">✎</button><button data-pl="d'+i+'">✕</button></div>'}
 function thPanel(){const t=T(),o=thUI.open,hd=hebToday();let h='';
   if(!o)return '';
   if(o==='books'){h+='<div class="stg">'+TH_BOOKS.map((b,i)=>'<button class="stl'+(thUI.sub==='b'+i?' on':'')+'" data-sub="b'+i+'">'+b[0]+'</button>').join('')+'</div>'}
@@ -264,6 +264,7 @@ document.addEventListener('click',async e=>{
   if(d.pl){const k=d.pl[0],i=+d.pl.slice(1),l=T().lists[i];
     if(k==='r')thStartRead(listItems(l),0,l.n,{noRead:true});
     else if(k==='c')thNav({v:'cont',items:listItems(l),label:l.n});
+    else if(k==='u'||k==='v'){const j=k==='u'?i-1:i+1,L=T().lists;if(j>=0&&j<L.length){const x=L[i];L[i]=L[j];L[j]=x;save();thMenu()}}
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
