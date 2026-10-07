@@ -50,7 +50,7 @@ h2.sec{font-size:15px;color:var(--mut);margin:20px 4px 8px;font-weight:600}
 .grp{margin:36px 0 6px;padding-bottom:14px;text-align:center;font-family:'Frank Ruhl Libre','David Libre',Georgia,serif;font-weight:900;font-size:1.5em;line-height:1.3;color:var(--brown);background:linear-gradient(90deg,transparent,var(--acc2),transparent) bottom/70% 2px no-repeat}
 .grp .st{color:var(--acc2);font-size:.6em;margin:0 12px;vertical-align:middle}
 .para{padding:6px 4px;line-height:1.85;border-radius:8px;scroll-margin-top:70px}
-.para.sel{background:rgba(184,135,43,.18)}
+.para.sel{background:transparent;box-shadow:inset -3px 0 0 rgba(184,135,43,.65)}
 .para.mk{border-right:4px solid var(--acc2);padding-right:8px}
 .para small{font-size:.8em;color:var(--mut)}
 .para small small{font-size:1em}
@@ -311,7 +311,7 @@ function openMenu(){
   $('#ovMenu').classList.add('on')}
 function openMarks(){
   let h='<h3>הסימניות שלי</h3>';
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: ★ שומר את המקום שבראש המסך.</p>';
+  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
   S.marks.forEach((m,i)=>{const b=book(m.book);h+='<div class="li" data-gm="'+i+'"><span class="t">★ '+esc(m.label)+'<br><small style="color:var(--mut)">'+esc(b?b.name:'')+'</small></span></div>'});
   $('#shMarks').innerHTML=h;$('#ovMarks').classList.add('on')}
 function menuGo(act){closeMenu();
@@ -473,7 +473,10 @@ $('#reader').addEventListener('click',e=>{const cb=e.target.closest('.closeb');i
   const open=c.nextElementSibling.classList.contains('hide');setOpen(c,open);
   if(!open&&c.getBoundingClientRect().top<70)c.scrollIntoView({block:'start'})});
 /* tap paragraph -> add mark */
-let selEl=null; /* בלחיצה על פסקה לא מסמנים אותה יותר; ★ שומר את הפסקה שבראש המסך */
+let selEl=null;
+$('#reader').addEventListener('click',e=>{
+  const p=e.target.closest('.para');if(!p)return;
+  if(selEl)selEl.classList.remove('sel');selEl=p;p.classList.add('sel')});
 $('#bPrev').onclick=()=>navBack();
 $('#bTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 $('#bMark').onclick=()=>{
@@ -486,7 +489,7 @@ $('#bMark').onclick=()=>{
    <input type="text" id="mkLabel" value="${esc(ex>=0?S.marks[ex].label:part.he)}">
    <div class="row"><button class="btn grow" id="mkSave">שמירת סימנייה</button>
    ${ex>=0?'<button class="btn del" id="mkDel">מחיקה</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
-   <p style="color:var(--mut);font-size:13px">טיפ: ★ שומר את הפסקה שבראש המסך. כדי לשמור מקום אחר, מגללים אותו לראש המסך.</p>`;
+   <p style="color:var(--mut);font-size:13px">טיפ: לחיצה על פסקה מסמנת אותה, ואז ★ שומר בדיוק את המקום הזה. בלי סימון תישמר הפסקה שבראש המסך.</p>`;
   $('#ovMark').classList.add('on');
   $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
   $('#mkSave').onclick=()=>{const label=$('#mkLabel').value.trim()||part.he;
@@ -519,7 +522,7 @@ $('#bSet').onclick=()=>{
    <button class="btn ${S.theme==='light'?'':'sec'}" data-th="light">בהיר</button>
    <button class="btn ${S.theme==='dark'?'':'sec'}" data-th="dark">כהה</button></div>
   <h3 style="margin-top:18px">ניהול סימניות</h3>`;
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: ★ שומר את המקום שבראש המסך.</p>';
+  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
   S.marks.forEach((m,i)=>{const b=book(m.book);h+=`<div class="li"><span class="t">${esc(m.label)}<br><small style="color:var(--mut)">${esc(b?b.name:'')}</small></span>
     <button class="btn sec" data-up="${i}">↑</button><button class="btn sec" data-rn="${i}">✎</button><button class="btn del" data-rm="${i}">✕</button></div>`});
   h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
