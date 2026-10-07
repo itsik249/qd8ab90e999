@@ -277,7 +277,7 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 <main id="th" class="hide"></main>
 <button class="thback hide" id="thBackF">↩ חזרה</button>
 <div class="thbar hide" id="thbar"><button id="thPrev">▸ הקודם</button><button id="thRd">✓ קראתי</button><button id="thNext">קראתי והמשך ◂</button></div>
-<div class="fab hide" id="fab"><button id="bTop" aria-label="לראש הדף">⬆</button><button id="bJump">☰ קפיצה</button><button id="bMark">★</button></div>
+<div class="fab hide" id="fab"><button id="bTop" aria-label="לראש הדף">⬆</button><button id="bJump">☰ דילוג</button><button id="bMark">★</button></div>
 
 <div class="ov" id="ovJump"><div class="sheet" id="shJump"></div></div>
 <div class="ov" id="ovTh"><div class="sheet" id="shTh"></div></div>
@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 11';
+const APP_VERSION='7.10.2026 · 12';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -620,7 +620,7 @@ document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.
 
 /* jump sheet */
 $('#bJump').onclick=()=>{
-  const b=book(cur.id);let h=`<h3>קפיצה — ${esc(b.name)}</h3>`;
+  const b=book(cur.id);let h=`<h3>דילוג — ${esc(b.name)}</h3>`;
   const mk=S.marks.map((m,i)=>({m,i})).filter(x=>x.m.book===cur.id);
   if(mk.length){h+='<div class="li g">★ הסימניות שלי</div>'+mk.map(x=>`<div class="li" data-mk="${x.i}"><span class="t">★ ${esc(x.m.label)}</span></div>`).join('')}
   let lg=null;
