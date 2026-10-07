@@ -218,6 +218,7 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 .dcard{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--sh)}
 .dcard .dt{flex:1;min-width:0;text-align:center}.dcard .dt b{display:block;font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:900;font-size:21px;color:var(--brown);line-height:1.2}
 .mkpill{display:block;margin:-4px auto 16px;padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--brown);font-size:13px;font-weight:700}
+.mgh{font-size:12.5px;font-weight:700;color:var(--mut);margin:12px 2px 2px;letter-spacing:.2px}
 .mrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
 .mrow .mgo{flex:1;min-width:0;background:none;border:0;padding:8px 4px;text-align:right;color:var(--fg)}
 .mrow .mgo b{display:block;font-size:16px}.mrow .mgo small{display:block;color:var(--mut);font-size:12.5px;margin-top:2px}
@@ -243,6 +244,25 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 .drawer .mi:active{background:rgba(184,135,43,.12)}
 #home{padding-bottom:96px}
 @media(max-width:430px){#home .card{padding:5px 10px}.card svg{width:22px;height:22px;margin-left:7px}#home .card b{font-size:15px;line-height:1.15}.dcard .dt b,.dcard .dt .gd{font-size:19px}}
+/* ===== דפים מיוחדים ===== */
+.segnus{display:flex;gap:6px;margin:8px 0 14px;position:sticky;top:var(--hh,56px);z-index:3;background:linear-gradient(180deg,var(--bg),var(--bg2));padding:8px 0}
+.sn{flex:1;padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));font-size:15px;font-weight:700;color:var(--fg)}
+.sn.on{background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);color:var(--on-acc);border-color:transparent}
+.sn.off{opacity:.55}.sn small{display:block;font-size:10.5px;font-weight:600}
+.shcard{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:10px 0;box-shadow:var(--sh)}
+.shic{flex:none;font-size:38px;line-height:1.1;width:46px;text-align:center}
+.shbody{min-width:0}.shname{display:block;font-size:1.05em;color:var(--brown);margin-bottom:4px}
+.shverb{font-weight:600;color:var(--mut);font-size:.85em}
+.shtxt{line-height:1.85}
+.shnote{margin:6px 0}
+#reader[data-sp=tikkun] .thv{line-height:2;margin:10px 4px 22px}
+#reader[data-sp=tikkun] .tv{color:var(--acc2);font-size:.6em;margin:0 8px 0 5px;font-weight:700}
+#reader[data-sp=tikkun] section{scroll-margin-top:calc(var(--hh,56px) + 60px)}
+.thprog{display:flex;align-items:center;gap:10px;margin:6px 0 10px;font-size:13.5px;color:var(--mut)}
+.thprog .thpb{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.thprog .thpb i{display:block;height:100%;background:var(--acc2)}
+.doneb{background:linear-gradient(135deg,#fff3cc,#efd48a);border:1px solid var(--acc2);border-radius:14px;padding:12px;text-align:center;font-weight:800;color:var(--brown);margin:6px 0 10px}
+.doneb small{display:block;font-weight:600;font-size:12.5px;margin-top:2px;color:var(--mut)}
+.thacts{margin-top:8px}.thacts .btn{padding:10px 8px;font-size:14px}
 </style>
 </head>
 <body>
@@ -267,6 +287,7 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 
 <script src="data.js"></script>
 <script src="tehillim.js"></script>
+<script src="extra.js"></script>
 <script src="th.js"></script>
 <script>
 const D=window.SIDDUR;
@@ -291,11 +312,14 @@ const IC={
   chatzot:SV('<path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/><path d="M16 4v3M14.5 5.5h3"/>'),
   bed:SV('<path d="M3 18V7"/><path d="M3 14h18v4"/><path d="M21 14v-2a3 3 0 00-3-3h-8v5"/><circle cx="7" cy="11" r="1.6"/>'),
   moon:SV('<path d="M17 15A7 7 0 018 6a7 7 0 109 9z"/><circle cx="18" cy="6" r=".8"/>'),
+  nishmat:SV('<path d="M12 21s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 11c0 5.5-7 10-7 10z"/>'),
+  shira:SV('<path d="M3 12c3-4 8-5 12-2l5-3v10l-5-3c-4 3-9 2-12-2z"/><circle cx="8" cy="11" r=".8"/>'),
+  tikkun:SV('<path d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7z"/><path d="M7 4a2 2 0 00-2 2v10a2 2 0 002 2"/><path d="M10 9h6M10 13h6"/>'),
   misc:SV('<path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/>')
 };
 /* היסטוריית דפדפן: כל רמת ניווט באפליקציה (בית=0, תפילה או עמוד תהילים=1, מזמור או קריאה רצופה=2) היא רשומה אחת בהיסטוריה.
    histSync מיישר את ההיסטוריה למצב המסך, ו-popstate מיישר את המסך לרשומה שאליה חזרו (למשל בכפתור החזרה של הטלפון). */
-let hSilent=0,hLock=false,histHooked=false;
+let hSilent=0,hLock=false,histHooked=false,hSkip=0;
 const curLv=()=>(history.state&&history.state.lv)||0;
 function uiLevel(){if(typeof thOpen!=='undefined'&&thOpen)return thStack.length;return $('#reader').classList.contains('hide')?0:1}
 function histSync(){if(hLock)return;
@@ -325,10 +349,13 @@ function openMenu(){
     it('about','<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11v5"/>','אודות');
   $('#ovMenu').classList.add('on')}
 function openMarks(){
+  const row=(m,i)=>{const bk=book(m.book),pt=bk?partOf(bk,m.k):null;
+    return '<div class="mrow"><button class="mgo" data-gm="'+i+'"><b>★ '+esc(m.label)+'</b><small>'+esc((bk?bk.name:'')+(pt?' · '+pt.he:''))+'</small></button><button class="mic" data-mke="'+i+'" aria-label="שינוי שם">✎</button><button class="mic" data-mkd="'+i+'" aria-label="מחיקה">✕</button></div>'};
   let x='<h3>הסימניות שלי</h3>';
   if(!S.marks.length)x+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
-  S.marks.forEach((m,i)=>{const bk=book(m.book),pt=bk?partOf(bk,m.k):null;
-    x+='<div class="mrow"><button class="mgo" data-gm="'+i+'"><b>★ '+esc(m.label)+'</b><small>'+esc((bk?bk.name:'')+(pt?' · '+pt.he:''))+'</small></button><button class="mic" data-mke="'+i+'" aria-label="שינוי שם">✎</button><button class="mic" data-mkd="'+i+'" aria-label="מחיקה">✕</button></div>'});
+  const here=cur?S.marks.map((m,i)=>[m,i]).filter(p=>p[0].book===cur.id):[],rest=S.marks.map((m,i)=>[m,i]).filter(p=>!cur||p[0].book!==cur.id);
+  if(here.length&&rest.length){x+='<div class="mgh">בתפילה הזו</div>'+here.map(p=>row(p[0],p[1])).join('')+'<div class="mgh">בשאר התפילות</div>'+rest.map(p=>row(p[0],p[1])).join('')}
+  else x+=S.marks.map((m,i)=>row(m,i)).join('');
   $('#shMarks').innerHTML=x;$('#ovMarks').classList.add('on')}
 function renameMark(i){const m=S.marks[i];if(!m)return;
   dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמירה'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();if($('#ovMarks').classList.contains('on'))openMarks()}})}
@@ -342,7 +369,7 @@ function menuGo(act){closeMenu();
   else if(act==='marks')openMarks();
   else if(act==='settings'||act==='backup')$('#bSet').click();
   else if(act==='about')dlg({title:'הסידור שלי',cancel:false,ok:'סגירה',
-    body:'<p class="dm">סידור עדות המזרח (שחרית, מנחה, ערבית, ברכת המזון, תיקון חצות ועוד) וספר תהילים, לשימוש אישי.</p><p class="dm">הנוסחים: ספריית Sefaria, סידור עדות המזרח (מהדורת שליחסבו), רישיון CC0. תהילים: Tanach with Nikkud, נחלת הכלל.</p>'})}
+    body:'<p class="dm">סידור עדות המזרח (שחרית, מנחה, ערבית, ברכת המזון, תיקון חצות ועוד) וספר תהילים, לשימוש אישי.</p><p class="dm" style="font-size:13px">גרסה: '+APP_VERSION+'</p><p class="dm">הנוסחים: ספריית Sefaria, סידור עדות המזרח (מהדורת שליחסבו), רישיון CC0. תהילים: Tanach with Nikkud, נחלת הכלל.</p>'})}
 document.addEventListener('click',e=>{
   const mi=e.target.closest('[data-mi]');if(mi){menuGo(mi.dataset.mi);return}
   if(e.target.id==='ovMenu'){closeMenu();return}
@@ -355,6 +382,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
+const APP_VERSION='7.10.2026 · 5';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -387,6 +415,9 @@ const BOOKS=[
  {id:'arvit',name:'ערבית',sub:'',secs:['Weekday Arvit']},
  {id:'mayin',name:'ברכת מעין שלוש',sub:'',secs:['Al Hamihya'],more:1},
  {id:'bed',name:'קריאת שמע על המיטה',sub:'',secs:['Bedtime Shema'],more:1},
+ {id:'nishmat',name:'נשמת כל חי',special:'nishmat',secs:[]},
+ {id:'shira',name:'שירת הבריאה',special:'shira',secs:[]},
+ {id:'tikkun',name:'תיקון הכללי',special:'tikkun',secs:[]},
  {id:'moon',name:'ברכת הלבנה',sub:'',secs:['Blessing of the Moon'],more:1},
  {id:'misc',name:'ברכות ותפילות שונות',sub:'תפילת הדרך ועוד',secs:['Assorted Blessings and Prayers'],more:1},
 ];
@@ -432,9 +463,8 @@ function renderHome(){
     if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך איפה שהפסקת: '+book(la.id).name;act='data-resume="'+la.id+'"'}
     else if(la.t==='th'&&S.th&&S.th.cur){txt='המשך איפה שהפסקת: תהילים · מזמור '+heb(S.th.cur.seq[S.th.cur.i].c);act='data-th="homeresume"'}
     if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
-  const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','bentch','mayin','chatzot','bed'];
+  const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','bentch','mayin','chatzot','tikkun','bed','nishmat','shira','moon','misc'];
   h+='<div class="grid">'+MAIN_ORDER.map(id=>id==='TH'?'<button class="card" data-th="open">'+IC.TH+'<b>תהילים</b></button>':(book(id)?`<button class="card" data-b="${id}">${IC[id]||''}<b>${esc(book(id).name)}</b></button>`:'')).join('')+'</div>';
-  h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more&&!MAIN_ORDER.includes(b.id)).map(b=>`<button class="card" data-b="${b.id}">${IC[b.id]||''}<b>${esc(b.name)}</b></button>`).join('')+'</div>';
   $('#home').innerHTML=h;histSync();
 }
 $('#home').addEventListener('click',e=>{
@@ -452,8 +482,9 @@ $('#home').addEventListener('click',e=>{
 let cur=null;
 function openBook(id,k,para,fresh){
   const b=book(id);cur={id};S.lastBook=id;S.lastAct={t:'b',id:id};S.open=id;save();
-  $('#home').classList.add('hide');const r=$('#reader');r.classList.remove('hide');$('#fab').classList.remove('hide');
+  $('#home').classList.add('hide');const r=$('#reader');r.classList.remove('hide');r.removeAttribute('data-sp');$('#fab').classList.remove('hide');
   $('#ttl').textContent=b.name;$('#bBack').classList.remove('hide');$('#tabbar').classList.add('hide');
+  if(b.special){openSpecial(b);return}
   let h='',lastGrp=null;
   b.parts.forEach(p=>{
     if(p.grp&&p.grp!==lastGrp){h+=`<div class="grp"><span class="st">✦</span>${esc(p.grp.replace('לימי החול','לימות החול'))}<span class="st">✦</span></div>`;lastGrp=p.grp}
@@ -476,6 +507,49 @@ function openBook(id,k,para,fresh){
   else window.scrollTo(0,0);
   updateNav();histSync();
 }
+/* ---- דפים מיוחדים: נשמת כל חי (בחירת נוסח), שירת הבריאה (עם אייקונים), תיקון הכללי ---- */
+const SP_ICON={'שמים':'🌌','ארץ':'🌍','גן עדן':'🌳','גיהנם':'🔥','מדבר':'🏜️','שדות':'🌾','מים':'💧','ימים':'🌊','נהרות':'🏞️','מעינות':'⛲',
+ 'יום':'☀️','לילה':'🌙','שמש':'🌞','ירח':'🌛','כוכבים':'⭐','עבים':'☁️','ענני כבוד':'⛅','רוח':'🌬️','ברקים':'⚡','טל':'💧','גשמים':'🌧️',
+ 'אילנות שבשדה':'🌳','גפן':'🍇','תאנה':'🌿','רמון':'🍎','תמר':'🌴','תפוח':'🍏','שבלת חטים':'🌾','שבלת שעורים':'🌾','שאר שבולים':'🌾','ירקות שבשדה':'🥬','דשאים':'🌱',
+ 'תרנגול':'🐓','בקול ראשון':'🐓','בקול שני':'🐓','בקול שלישי':'🐓','בקול רביעי':'🐓','בקול חמישי':'🐓','בקול שישי':'🐓','בקול שביעי':'🐓','תרנגלת':'🐔','יונה':'🕊️','נשר':'🦅','עגור':'🦢','צפור':'🐦','סנונית':'🐦','טסית':'🐦','ציה':'🐦','רצפי':'🐦','חסידה':'🦢','עורב':'🐦','זרזיר':'🐦','אוז שבבית':'🦆','פרוגיות':'🐦','רחמה':'🐦','צפרת כרמים':'🐦','חסיל':'🦗','שממית':'🦎','זבוב':'🦟','תנינים':'🐊','לויתן':'🐋','דגים':'🐟','צפרדע':'🐸',
+ 'בהמה דקה טהורה':'🐑','בהמה גסה טהורה':'🐄','בהמה דקה טמאה':'🐖','בהמה גסה טמאה':'🐪','גמל':'🐪','סוס':'🐎','פרד':'🐴','חמור':'🐴','שור':'🐂','חיות השדה':'🦌','צבי':'🦌','פיל':'🐘','אריה':'🦁','דב':'🐻','זאב':'🐺','שועל':'🦊','עכבר':'🐭','חתול':'🐱','ועכבר':'🐭',
+ 'שרצים':'🐛','אלים שבשרצים':'🐛','נחש':'🐍','עקרב':'🦂','שבלול':'🐌','נמלה':'🐜','חלדה':'🐀','כלבים':'🐕'};
+const SP_HEB=['א','ב','ג','ד','ה','ו'];
+function spNishmat(){
+  const vs=window.EXTRA.nishmat;let id=S.nusach||'mizrach';if(!vs.find(v=>v.id===id&&v.paras))id='mizrach';
+  const v=vs.find(x=>x.id===id);
+  return '<div class="grp"><span class="st">✦</span>נשמת כל חי<span class="st">✦</span></div>'+
+   '<div class="segnus" role="tablist">'+vs.map(x=>'<button class="sn'+(x.id===id?' on':'')+(x.paras?'':' off')+'" data-nus="'+x.id+'"'+(x.paras?'':' disabled')+'>'+esc(x.name)+(x.paras?'':'<small>בקרוב</small>')+'</button>').join('')+'</div>'+
+   v.paras.map((t,i)=>'<div class="para" id="qn_'+i+'" data-k="n.'+id+'" data-i="'+i+'">'+t+'</div>').join('')}
+function spShira(){
+  const E=window.EXTRA.shira;
+  let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div>';
+  E.chapters.forEach((ch,ci)=>{
+    x+='<div class="ph" id="shc'+ci+'">פרק '+SP_HEB[ci]+'׳</div>';
+    ch.forEach(it=>{
+      if(!it.name){x+='<div class="para shnote"><small>'+esc(it.text)+'</small></div>';return}
+      const ic=SP_ICON[it.plain];
+      x+='<div class="shcard">'+(ic?'<div class="shic">'+ic+'</div>':'')+'<div class="shbody"><b class="shname">'+esc(it.name)+' <span class="shverb">'+esc(it.verb)+'</span></b><div class="shtxt">'+esc(it.text)+'</div></div></div>'});
+  });
+  x+='<div class="ph">'+esc(E.closing[0])+'</div>'+E.closing.slice(1).map(t=>'<div class="para">'+esc(t)+'</div>').join('');
+  return x}
+const TIKKUN=[16,32,41,42,59,77,90,105,137,150];
+function spTikkun(){
+  const T=window.TEHILLIM;
+  let x='<div class="grp"><span class="st">✦</span>תיקון הכללי<span class="st">✦</span></div><p class="thn" style="text-align:center">עשרה מזמורים: '+TIKKUN.map(c=>heb(c)).join(', ')+'</p>';
+  TIKKUN.forEach((c,i)=>{x+='<section id="tk'+i+'"><div class="ph">מזמור '+heb(c)+'</div><p class="thv">'+T[c-1].map((v,j)=>'<span class="tv">'+hebPlain(j+1)+'</span>'+esc(v)).join(' ')+'</p></section>'});
+  return x}
+function openSpecial(b){
+  const r=$('#reader');
+  let x=b.special==='nishmat'?spNishmat():b.special==='shira'?spShira():spTikkun();
+  if(b.special==='tikkun')x='<div class="cs" id="tkStrip">'+TIKKUN.map((c,i)=>'<button class="cb" data-tk="'+i+'">'+heb(c)+'</button>').join('')+'</div>'+x;
+  r.innerHTML=x;r.dataset.sp=b.special;applyTheme();$('#fab').classList.add('hide');window.scrollTo(0,0);
+  document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px');
+  updateNav();histSync()}
+document.addEventListener('click',e=>{
+  const n=e.target.closest('[data-nus]');if(n&&!n.disabled){S.nusach=n.dataset.nus;save();const b=book(cur&&cur.id);if(b&&b.special==='nishmat'){const y=window.scrollY;openSpecial(b);window.scrollTo(0,y)}return}
+  const tk=e.target.closest('[data-tk]');if(tk){const el=document.getElementById('tk'+tk.dataset.tk);if(el)el.scrollIntoView({block:'start'})}
+});
 function paintMarks(){
   document.querySelectorAll('.para.mk').forEach(e=>e.classList.remove('mk'));
   S.marks.forEach(m=>{if(m.book===cur?.id&&m.para!=null){const e=byId('q'+m.k+'_'+m.para);if(e)e.classList.add('mk')}})}
@@ -491,7 +565,9 @@ $('#bBack').onclick=()=>{if(thOpen){thHome();return}
 window.addEventListener('popstate',()=>{
   if(hSilent>0){hSilent--;histSync();return}
   const lv=curLv();hLock=true;
-  try{for(let g=0;g<4&&uiLevel()>lv;g++){if(thOpen){if(thStack.length>1)thPop();else thLeave()}else if(cur)leave();else break}}finally{hLock=false}});
+  try{for(let g=0;g<4&&uiLevel()>lv;g++){if(thOpen){if(thStack.length>1)thPop();else thLeave()}else if(cur)leave();else break}}finally{hLock=false}
+  /* נחתנו על רשומה ישנה שגבוהה ממה שמוצג (נשארה מפעם קודמת): מדלגים עליה */
+  if(lv>uiLevel()&&hSkip<6){hSkip++;history.back()}else hSkip=0});
 
 function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
 function reveal(el){
@@ -515,11 +591,11 @@ $('#bMark').onclick=()=>{
   const ex=S.marks.findIndex(m=>m.book===cur.id&&m.k===e.dataset.k&&m.para==+e.dataset.i);
   const snippet=e.textContent.trim().slice(0,60);
   const act=activeMark?S.marks.indexOf(activeMark):-1;
-  const opts='<option value="new">סימנייה חדשה</option>'+S.marks.map((m,i)=>{const bk=book(m.book);return '<option value="'+i+'"'+(i===act?' selected':'')+'>הזזת: '+esc(m.label)+(bk?' ('+esc(bk.name)+')':'')+'</option>'}).join('');
+  const opts='<option value="new">סימנייה חדשה</option>'+S.marks.map((m,i)=>'<option value="'+i+'"'+(i===act?' selected':'')+'>שמירת "'+esc(m.label)+'" במקום חדש</option>').join('');
   const startLabel=act>=0?S.marks[act].label:(ex>=0?S.marks[ex].label:part.he);
   $('#shMark').innerHTML=`<h3>שמירת סימנייה</h3>
    <p style="color:var(--mut);margin:0 0 10px">${esc(part.he)} — ${esc(snippet)}…</p>
-   ${S.marks.length?'<label class="df"><span>שמירה כ:</span><select id="mkMode">'+opts+'</select></label>':''}
+   ${S.marks.length?'<label class="df"><span>מה לשמור?</span><select id="mkMode">'+opts+'</select></label>':''}
    <input type="text" id="mkLabel" value="${esc(startLabel)}">
    <div class="row"><button class="btn grow" id="mkSave">שמירה</button>
    ${ex>=0?'<button class="btn del" id="mkDel">מחיקה</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
@@ -530,7 +606,7 @@ $('#bMark').onclick=()=>{
   $('#mkSave').onclick=()=>{const mode=$('#mkMode')?$('#mkMode').value:'new',label=$('#mkLabel').value.trim()||part.he;
     const base={book:cur.id,k:e.dataset.k,para:+e.dataset.i,sn:e.textContent.trim().slice(0,30)};
     if(mode!=='new'){const i=+mode,old=S.marks[i];S.marks[i]=Object.assign({},base,{label});activeMark=S.marks[i];save();paintMarks();$('#ovMark').classList.remove('on');
-      toastUndo('הסימנייה הוזזה ★',()=>{S.marks[i]=old;activeMark=old;save();paintMarks()})}
+      toastUndo('הסימנייה עברה למקום החדש ★',()=>{S.marks[i]=old;activeMark=old;save();paintMarks()})}
     else{const m=Object.assign({},base,{label});if(ex>=0)S.marks[ex]=m;else S.marks.push(m);activeMark=m;save();paintMarks();$('#ovMark').classList.remove('on');toast('נשמר ★')}};
   if(ex>=0)$('#mkDel').onclick=()=>{$('#ovMark').classList.remove('on');deleteMark(ex)};
 };
@@ -560,7 +636,7 @@ $('#bSet').onclick=()=>{
    <button class="btn ${S.theme==='dark'?'':'sec'}" data-th="dark">כהה</button></div>
   <h3 style="margin-top:18px">סימניות</h3><div class="row"><button class="btn sec grow" id="stMarks">ניהול הסימניות שלי</button></div>`;
   h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
-   <div class="row"><button class="btn grow" id="cl">סגירה</button></div>`;
+   <div class="row"><button class="btn grow" id="cl">סגירה</button></div><p style="text-align:center;color:var(--mut);font-size:12px;margin:10px 0 0">גרסה: ${APP_VERSION}</p>`;
   $('#shSet').innerHTML=h;$('#ovSet').classList.add('on')};
 $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
   const re=()=>$('#bSet').click();

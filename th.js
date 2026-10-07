@@ -63,10 +63,21 @@ function thRender(){const s=thStack[thStack.length-1];
 
 function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
 /* ---- עמוד ראשי של תהילים ---- */
-function chipsHTML(ctx){const items=ctx.items,fu=items.findIndex(x=>!itRead(x));
-  return '<div class="thn">'+esc(ctx.title)+'</div><div class="pbar"><button class="btn" style="flex:1" data-cs="'+Math.max(0,fu)+'">'+(fu>0?'המשך מהמזמור שעוד לא נקרא':'להתחיל לקרוא')+'</button></div>'+
-    '<div class="chs">'+items.map((x,i)=>'<button class="chb'+(itRead(x)?' rd':'')+'" data-cs="'+i+'">'+itemLabel(x)+(itRead(x)?' ✓':'')+'</button>').join('')+'</div>'}
-function setSub(key,items,title){thUI.sub=key;thUI.ctx={items:items,label:title,title:title}}
+function chipsHTML(ctx){const items=ctx.items,fu=items.findIndex(x=>!itRead(x)),rd=items.filter(itRead).length,all=rd===items.length,ed=!!thUI.edit;
+  const dn=(T().done||{})[thUI.sub]||0;
+  let x='<div class="thn">'+esc(ctx.title)+'</div>';
+  x+='<div class="thprog"><div class="thpb"><i style="width:'+(rd/items.length*100)+'%"></i></div><span>'+(rd?'נקראו '+hn(rd)+' מתוך '+hn(items.length):'עוד לא נקרא כלום')+'</span></div>';
+  if(all&&!ed)x+='<div class="doneb">סיימת לקרוא את הכול ✓'+(dn?'<small>הושלם '+hn(dn)+' פעמים</small>':'')+'</div><div class="pbar"><button class="btn" style="flex:1" data-ctxa="reset">להתחיל מחדש</button><button class="btn sec" data-cs="0">קריאה מההתחלה</button></div>';
+  else if(!ed)x+='<div class="pbar"><button class="btn" style="flex:1" data-cs="'+Math.max(0,fu)+'">'+(rd?'המשך מהמזמור שעוד לא נקרא':'להתחיל לקרוא')+'</button></div>';
+  x+='<div class="pbar thacts">'+(ed?'<button class="btn" style="flex:1" data-ctxa="edit">✓ סיום עריכה</button>':
+    '<button class="btn sec" style="flex:1" data-ctxa="edit">✎ עריכת סימונים</button>'+(all?'':'<button class="btn sec" style="flex:1" data-ctxa="all">סימון הכול</button>')+(rd&&!all?'<button class="btn sec" style="flex:1" data-ctxa="reset">איפוס</button>':''))+'</div>';
+  if(ed)x+='<p class="thn" style="margin:8px 2px 0">לחיצה על מזמור מסמנת אותו כנקרא או מבטלת את הסימון.</p>';
+  x+='<div class="chs">'+items.map((y,i)=>'<button class="chb'+(itRead(y)?' rd':'')+'" data-cs="'+i+'">'+itemLabel(y)+(itRead(y)?' ✓':'')+'</button>').join('')+'</div>';
+  return x}
+/* שינוי סימוני "נקרא" של רשימת מזמורים, עם ביטול */
+function ctxMarks(items,fn,msg){const keys=items.map(keyOf),before=keys.map(k=>T().read[k]),dn0=JSON.stringify(T().done||{});fn(keys);save();thMenu();
+  toastUndo(msg,()=>{T().done=JSON.parse(dn0);keys.forEach((k,i)=>{if(before[i]===undefined)delete T().read[k];else T().read[k]=before[i]});save();thMenu()})}
+function setSub(key,items,title){thUI.edit=false;thUI.sub=key;thUI.ctx={items:items,label:title,title:title}}
 function listItems(l){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items.slice();if(!dyn&&l.sort)its.sort((a,b)=>a.c-b.c);return its}
 function persRow(l,i){const dyn=l.dyn&&T().birth,a=dyn?curAge():null,its=listItems(l);
   return '<div class="pli"><div class="pn"><b>'+esc(l.n)+'</b><small>'+(dyn?'מזמור '+heb(its[0].c)+' · מתעדכן אוטומטית (גיל '+a+')':its.map(x=>itemLabel(x)).join(' · '))+'</small></div>'+
@@ -228,7 +239,14 @@ document.addEventListener('click',async e=>{
     thMenu();return}
   if(d.md==='today'){const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu();return}
   if(d.ss){if(isAfterSunset())delete T().ss;else T().ss=new Date().toDateString();save();thUI.sub=null;thUI.ctx=null;thMenu();return}
-  if(d.cs!==undefined&&thUI.ctx){thStartRead(thUI.ctx.items,+d.cs,thUI.ctx.label);return}
+  if(d.ctxa&&thUI.ctx){const it=thUI.ctx.items;
+    if(d.ctxa==='edit'){thUI.edit=!thUI.edit;thMenu();return}
+    if(d.ctxa==='all'){ctxMarks(it,ks=>ks.forEach(k=>{if(!T().read[k])T().read[k]=Date.now()}),'סומן הכול כנקרא');return}
+    if(d.ctxa==='reset'){const all=it.every(itRead);
+      ctxMarks(it,ks=>{if(all){T().done=T().done||{};T().done[thUI.sub]=(T().done[thUI.sub]||0)+1}ks.forEach(k=>delete T().read[k])},all?'התחלת מחדש. הושלם בהצלחה ✓':'הסימונים אופסו');return}}
+  if(d.cs!==undefined&&thUI.ctx){
+    if(thUI.edit){const x=thUI.ctx.items[+d.cs],k=keyOf(x);if(T().read[k])delete T().read[k];else T().read[k]=Date.now();save();thMenu();return}
+    thStartRead(thUI.ctx.items,+d.cs,thUI.ctx.label);return}
   if(d.cg!==undefined){const el=document.getElementById('cch'+d.cg);if(el)el.scrollIntoView({block:'start'});return}
   if(d.cj!==undefined){const cu=T().cur;cu.i=+d.cj;save();thRead();window.scrollTo(0,0);return}
   if(id==='thGo'){thGoCh(parseCh($('#thIn').value));return}
