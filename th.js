@@ -7,11 +7,12 @@ const MKEY={Tishri:1,Heshvan:2,Kislev:3,Tevet:4,Shevat:5,'Adar I':6,Adar:7,'Adar
 /* מתג: קישור "להסבר קצר" בחלון תאריך הלידה. כבוי לבקשת יצחק. ראה PROJECT.md */
 const SHOW_BIRTH_HELP=false;
 let thOpen=false,thStack=[],thUI={open:null,sub:null,ctx:null},thGoingHome=false;
-function thBackBtn(show){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
+function thBackBtn(show,low){const b=$('#thBackF');b.classList.toggle('hide',!show);if(!show)return;
   const lbl='↩ חזרה לרשימת המזמורים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
-  const cu=T().cur;b.classList.toggle('low',!!(cu&&cu.noMark))}
+  const cu=T().cur;b.classList.toggle('low',!!low||!!(cu&&cu.noMark))}
 /* כפתור הבית בכותרת: יוצא מתהילים בבת אחת, בלי להשאיר היסטוריה */
-function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n)}
+function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n);
+  setTimeout(()=>{if(thGoingHome){thGoingHome=false;thStack=[];T().inRead=false;save();thLeave()}},450)}
 function thPopEvt(){if(thGoingHome){thGoingHome=false;thStack=[];T().inRead=false;save();thLeave()}else thPop()}
 
 /* ---- אותיות ומספרים ---- */
@@ -52,14 +53,14 @@ function openTh(){
   $('#ttl').textContent='תהילים';$('#bBack').classList.remove('hide');
   thStack=[{v:'menu'}];
   if(T().inRead&&T().cur)thStack.push({v:'read'});
-  history.pushState({th:1},'');thRender();window.scrollTo(0,0)}
-function thNav(s){thStack.push(s);history.pushState({th:1},'');thRender();window.scrollTo(0,0)}
+  thStack.forEach(()=>histPush({th:1}));thRender();window.scrollTo(0,0)}
+function thNav(s){thStack.push(s);histPush({th:1});thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
   if(!thStack.length){thLeave();return}thRender();window.scrollTo(0,0)}
 function thLeave(){thOpen=false;S.open=null;save();$('#thBackF').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
 function thRender(){const s=thStack[thStack.length-1];
-  thBackBtn(s.v==='read');
-  if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else thRead()}
+  thBackBtn(s.v==='read'||s.v==='cont',s.v==='cont');updateNav();
+  if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else if(s.v==='cont'){$('#thbar').classList.add('hide');thCont()}else thRead()}
 
 function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
 /* ---- עמוד ראשי של תהילים ---- */
@@ -67,9 +68,10 @@ function chipsHTML(ctx){const items=ctx.items,fu=items.findIndex(x=>!itRead(x));
   return '<div class="thn">'+esc(ctx.title)+'</div><div class="pbar"><button class="btn" style="flex:1" data-cs="'+Math.max(0,fu)+'">'+(fu>0?'המשך מהמזמור שעוד לא נקרא':'להתחיל לקרוא')+'</button></div>'+
     '<div class="chs">'+items.map((x,i)=>'<button class="chb'+(itRead(x)?' rd':'')+'" data-cs="'+i+'">'+itemLabel(x)+(itRead(x)?' ✓':'')+'</button>').join('')+'</div>'}
 function setSub(key,items,title){thUI.sub=key;thUI.ctx={items:items,label:title,title:title}}
-function persRow(l,i){const dyn=l.dyn&&T().birth,a=dyn?curAge():null,its=dyn?[{c:ageCh(a)}]:l.items;
+function listItems(l){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items.slice();if(!dyn&&l.sort)its.sort((a,b)=>a.c-b.c);return its}
+function persRow(l,i){const dyn=l.dyn&&T().birth,a=dyn?curAge():null,its=listItems(l);
   return '<div class="pli"><div class="pn"><b>'+esc(l.n)+'</b><small>'+(dyn?'מזמור '+heb(its[0].c)+' · מתעדכן אוטומטית (גיל '+a+')':its.map(x=>itemLabel(x)).join(' · '))+'</small></div>'+
-    '<button class="go" data-pl="r'+i+'">קריאה</button><button data-pl="e'+i+'">✎</button><button data-pl="d'+i+'">✕</button></div>'}
+    '<button class="go" data-pl="r'+i+'">קריאה</button><button class="go2" data-pl="c'+i+'">רצופה</button><button data-pl="e'+i+'">✎</button><button data-pl="d'+i+'">✕</button></div>'}
 function thPanel(){const t=T(),o=thUI.open,hd=hebToday();let h='';
   if(!o)return '';
   if(o==='books'){h+='<div class="stg">'+TH_BOOKS.map((b,i)=>'<button class="stl'+(thUI.sub==='b'+i?' on':'')+'" data-sub="b'+i+'">'+b[0]+'</button>').join('')+'</div>'}
@@ -129,8 +131,16 @@ function thBarState(){const cu=T().cur,it=cu.seq[cu.i],rd=!!T().read[keyOf(it)];
 function thMark(on){const cu=T().cur,k=keyOf(cu.seq[cu.i]);if(on)T().read[k]=Date.now();else delete T().read[k];save()}
 function thNextItem(){const cu=T().cur;
   if(cu.i+1<cu.seq.length){cu.i++;save();thRead();window.scrollTo(0,0)}
-  else{toast('סיימת! ✓');history.back()}}
+  else{toast('סיימת! ✓');navBack()}}
 
+/* ---- קריאה רצופה של רשימה: כל המזמורים בעמוד אחד ---- */
+function thCont(){const s=thStack[thStack.length-1],items=s.items;
+  $('#ttl').textContent=s.label||'קריאה רצופה';
+  const strip=items.length>1?'<div class="cs" id="thStrip">'+items.map((x,i)=>'<button class="cb" data-cg="'+i+'">'+itemLabel(x)+'</button>').join('')+'</div>':'';
+  const body=items.map((it,i)=>{const vs=window.TEHILLIM[it.c-1],f=it.f||1,to=it.t||vs.length;
+    return '<section class="cch" id="cch'+i+'"><div class="tht">מזמור '+heb(it.c)+'</div><p class="thv">'+vs.slice(f-1,to).map((v,j)=>'<span class="tv">'+hebPlain(f+j)+'</span>'+esc(v)).join(' ')+'</p></section>'}).join('<div class="cdiv">✦</div>');
+  $('#th').innerHTML=strip+'<div class="thr" style="font-size:'+S.font+'px"><div class="crumbrow"><button class="thcrumb" id="thCrumb">↩ חזרה לרשימת המזמורים</button></div>'+body+'<div class="cdiv">✦ סוף הרשימה ✦</div></div>';
+  document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px')}
 /* ---- חלון מעבר מהיר למזמור ---- */
 function thJumpSheet(){
   const opts=Array.from({length:150},(_,i)=>'<option value="'+(i+1)+'">מזמור '+heb(i+1)+(chRead(i+1)?' ✓':'')+'</option>').join('');
@@ -153,16 +163,16 @@ async function thEditList(idx){
   const draw=root=>{root.querySelector('#edChips').innerHTML=sel.length?sel.map((c,i)=>'<span class="dchip">'+heb(c)+'<button data-x="'+i+'" aria-label="הסרה">✕</button></span>').join(''):'<span style="color:var(--mut);font-size:13px">עוד לא נבחרו מזמורים</span>'};
   const v=await dlg({title:ex?'עריכת מזמורים אישיים':'מזמורים אישיים חדשים',noEnter:true,noFocus:false,ok:'שמירה',
     body:'<label class="df"><span>כותרת (למשל: לרפואה)</span><input id="edN" type="text" value="'+esc(ex?ex.n:'')+'"></label>'+
-      '<div class="df"><span>הוספת מזמור: חיפוש מהיר או בחירה מהרשימה (אפשר בכל סדר)</span><div class="thq" style="margin:0 0 8px"><input type="text" id="edIn" list="thDl" placeholder="חיפוש מזמורים מהיר" autocomplete="off"><button class="btn sec" id="edAdd" type="button">הוספה</button></div><select id="edSel">'+opts+'</select></div><div class="dchips" id="edChips"></div>',
+      '<div class="df"><span>הוספת מזמור: חיפוש מהיר או בחירה מהרשימה (אפשר בכל סדר)</span><div class="thq" style="margin:0 0 8px"><input type="text" id="edIn" list="thDl" placeholder="חיפוש מזמורים מהיר" autocomplete="off"><button class="btn sec" id="edAdd" type="button">הוספה</button></div><select id="edSel">'+opts+'</select></div><div class="dchips" id="edChips"></div><label class="chk"><input type="checkbox" id="edSort"'+(ex&&ex.sort?' checked':'')+'><span>להציג לפי סדר התהילים (מהקטן לגדול)</span></label>',
     onMount:root=>{draw(root);
       const add=c=>{if(!c){toast('לא נמצא מזמור כזה');return}if(sel.includes(c)){toast('המזמור כבר ברשימה');return}sel.push(c);draw(root);root.querySelector('#edIn').value='';root.querySelector('#edSel').value=''};
       root.querySelector('#edAdd').onclick=()=>add(parseCh(root.querySelector('#edIn').value));
       root.querySelector('#edIn').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add(parseCh(e.target.value))}};
       root.querySelector('#edSel').onchange=e=>{if(e.target.value)add(+e.target.value)};
       root.querySelector('#edChips').onclick=e=>{const b=e.target.closest('button[data-x]');if(b){sel.splice(+b.dataset.x,1);draw(root)}}},
-    collect:root=>{const n=root.querySelector('#edN').value.trim();if(!n){toast('חסרה כותרת');return false}if(!sel.length){toast('יש לבחור לפחות מזמור אחד');return false}return {n:n,items:sel.map(c=>({c:c}))}}});
+    collect:root=>{const n=root.querySelector('#edN').value.trim();if(!n){toast('חסרה כותרת');return false}if(!sel.length){toast('יש לבחור לפחות מזמור אחד');return false}return {n:n,items:sel.map(c=>({c:c})),sort:root.querySelector('#edSort').checked}}});
   if(!v)return;
-  if(ex){ex.n=v.n;ex.items=v.items}else t.lists.push(v);
+  if(ex){ex.n=v.n;ex.items=v.items;ex.sort=v.sort}else t.lists.push(v);
   save();thMenu()}
 async function thSaveAge(){const cu=T().cur,b=T().birth;
   const v=await dlg({title:'שמירת המזמור',msg:'אפשר לתת כותרת למזמור (וגם לשנות אותה בהמשך).',fields:[{id:'n',label:'כותרת',value:'מזמור לפי גיל'}],ok:'שמירה'});
@@ -220,6 +230,7 @@ document.addEventListener('click',async e=>{
   if(d.md==='today'){const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu();return}
   if(d.ss){if(isAfterSunset())delete T().ss;else T().ss=new Date().toDateString();save();thUI.sub=null;thUI.ctx=null;thMenu();return}
   if(d.cs!==undefined&&thUI.ctx){thStartRead(thUI.ctx.items,+d.cs,thUI.ctx.label);return}
+  if(d.cg!==undefined){const el=document.getElementById('cch'+d.cg);if(el)el.scrollIntoView({block:'start'});return}
   if(d.cj!==undefined){const cu=T().cur;cu.i=+d.cj;save();thRead();window.scrollTo(0,0);return}
   if(id==='thGo'){thGoCh(parseCh($('#thIn').value));return}
   if(id==='thGo2'){thGoCh(parseCh($('#thIn2').value),true);return}
@@ -234,11 +245,12 @@ document.addEventListener('click',async e=>{
   if(id==='thSaveAge'){thSaveAge();return}
   if(id==='thNewList'){thEditList(-1);return}
   if(d.pl){const k=d.pl[0],i=+d.pl.slice(1),l=T().lists[i];
-    if(k==='r'){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items;thStartRead(its,0,l.n,{noRead:true})}
+    if(k==='r')thStartRead(listItems(l),0,l.n,{noRead:true});
+    else if(k==='c')thNav({v:'cont',items:listItems(l),label:l.n});
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
-  if(id==='thBackF'||id==='thCrumb'){history.back();return}
+  if(id==='thBackF'||id==='thCrumb'){navBack();return}
   if(id==='thJump'){thJumpSheet();return}
   if(id==='thPrev'){const cu=T().cur;if(cu.i>0){cu.i--;save();thRead();window.scrollTo(0,0)}return}
   if(id==='thRd'){const cu=T().cur,k=keyOf(cu.seq[cu.i]),on=!T().read[k];thMark(on);thBarState();toast(on?'סומן: נקרא ✓':'הסימון בוטל');return}

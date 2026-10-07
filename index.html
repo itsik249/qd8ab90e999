@@ -141,6 +141,9 @@ header button{background:rgba(255,255,255,.18);border-radius:12px;color:inherit;
 .minires button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;color:var(--brown);font-weight:600}
 .sugg,.agebox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;box-shadow:var(--sh)}
 .sugg p{margin:6px 0 12px;color:var(--mut);font-size:14px}
+.cch{scroll-margin-top:calc(var(--hh,56px) + 64px);padding-top:6px}
+.cdiv{text-align:center;color:var(--acc2);margin:18px 0 6px;font-size:18px}
+.pli .go2{background:var(--card);border:1px solid var(--acc2)}
 .cs{position:sticky;top:var(--hh,56px);z-index:4;display:flex;gap:6px;overflow-x:auto;padding:8px 10px;margin:0 -12px;background:linear-gradient(180deg,var(--bg),var(--bg2));border-bottom:1px solid var(--line);scrollbar-width:none}
 .cs::-webkit-scrollbar{display:none}
 .cb{flex:none;min-width:44px;padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--card2));font-size:15px;font-weight:600;color:var(--fg)}
@@ -237,7 +240,7 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 </style>
 </head>
 <body>
-<header id="hd"><button id="bMenu" class="hb" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><h1 id="ttl">הסידור שלי</h1><button id="bBack" class="hb hide" aria-label="בית"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button><button id="bSet" style="display:none">⚙</button></header>
+<header id="hd"><button id="bMenu" class="hb" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button id="bPrev" class="hb" aria-label="חזרה" style="visibility:hidden"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><h1 id="ttl">הסידור שלי</h1><button id="bBack" class="hb hide" aria-label="בית"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button><span class="hb" id="hsp" style="visibility:hidden"></span><button id="bSet" style="display:none">⚙</button></header>
 
 <main id="home"></main>
 <div id="reader" class="hide"></div>
@@ -284,6 +287,17 @@ const IC={
   moon:SV('<path d="M17 15A7 7 0 018 6a7 7 0 109 9z"/><circle cx="18" cy="6" r=".8"/>'),
   misc:SV('<path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/>')
 };
+let popAt=0;
+/* חזרה: מנסה את היסטוריית הדפדפן, ואם לא קרה כלום (למשל אין רשומות) חוזר ידנית */
+function navBack(){const t0=Date.now();history.back();setTimeout(()=>{if(popAt<t0){if(thOpen)thPop();else if(cur)leave()}},450)}
+const histQ=[];let histHooked=false;
+function histPush(st){const ua=navigator.userActivation;
+  if(ua&&!ua.isActive){histQ.push(st);if(!histHooked){histHooked=true;const f=()=>{document.removeEventListener('click',f,true);document.removeEventListener('keydown',f,true);histHooked=false;while(histQ.length)history.pushState(histQ.shift(),'')};document.addEventListener('click',f,true);document.addEventListener('keydown',f,true)}}
+  else history.pushState(st,'')}
+/* כפתור חזרה בכותרת: מוצג בכל עמוד פנימי, חוץ מדף הבית ומעמודי המזמורים (שם יש חזרה לרשימה) */
+function updateNav(){const home=!$('#home').classList.contains('hide');
+  const top=(typeof thOpen!=='undefined'&&thOpen&&thStack.length)?thStack[thStack.length-1].v:null;
+  $('#bPrev').style.visibility=(home||top==='read'||top==='cont')?'hidden':'visible'}
 function closeMenu(){$('#ovMenu').classList.remove('on')}
 function openMenu(){
   const it=(k,ic,t)=>'<button class="mi" data-mi="'+k+'">'+SV(ic)+'<span>'+t+'</span></button>';
@@ -297,7 +311,7 @@ function openMenu(){
   $('#ovMenu').classList.add('on')}
 function openMarks(){
   let h='<h3>הסימניות שלי</h3>';
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
+  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: ★ שומר את המקום שבראש המסך.</p>';
   S.marks.forEach((m,i)=>{const b=book(m.book);h+='<div class="li" data-gm="'+i+'"><span class="t">★ '+esc(m.label)+'<br><small style="color:var(--mut)">'+esc(b?b.name:'')+'</small></span></div>'});
   $('#shMarks').innerHTML=h;$('#ovMarks').classList.add('on')}
 function menuGo(act){closeMenu();
@@ -381,7 +395,7 @@ function goMark(m){openBook(m.book,m.k,m.para)}
 function renderHome(){
   $('#ttl').textContent='הסידור שלי';$('#bBack').classList.add('hide');
   $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
-  $('#tabbar').classList.remove('hide');$('#bBack').classList.add('hide');
+  $('#tabbar').classList.remove('hide');$('#bBack').classList.add('hide');updateNav();
   let h='';
   {const hd=hebToday(),py=hebParts(new Date()).y;let gr='';try{gr=new Intl.DateTimeFormat('he-IL',{day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch(e){gr=new Date().toLocaleDateString()}
   h+='<div class="dcard"><div class="dt"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+' ה׳'+heb(py%1000)+'</b><span class="gd">'+esc(gr)+'</span></div></div>'}
@@ -434,7 +448,7 @@ function openBook(id,k,para,fresh){
   if(target){target.scrollIntoView({block:'start'});if(para!=null){target.classList.add('sel');setTimeout(()=>target.classList.remove('sel'),1800)}}
   else if(!k&&!fresh&&S.last[id]){const l=S.last[id],t=byId('q'+l.k+'_'+l.para);if(t){reveal(t);t.scrollIntoView({block:'start'})}}
   else window.scrollTo(0,0);
-  history.pushState({r:1},'');
+  histPush({r:1});updateNav();
 }
 function paintMarks(){
   document.querySelectorAll('.para.mk').forEach(e=>e.classList.remove('mk'));
@@ -447,8 +461,8 @@ let st;window.addEventListener('scroll',()=>{if(!cur||$('#reader').classList.con
   st=setTimeout(()=>{const e=topPara();if(e){S.last[cur.id]={k:e.dataset.k,para:+e.dataset.i};save()}},300)},{passive:true});
 function leave(){cur=null;S.open=null;save();renderHome();window.scrollTo(0,0)}
 $('#bBack').onclick=()=>{if(thOpen){thHome();return}
-  if(history.state&&history.state.r)history.back();else leave()};
-window.addEventListener('popstate',()=>{if(thOpen)thPopEvt();else if(cur)leave()});
+  if(history.state&&history.state.r)navBack();else leave()};
+window.addEventListener('popstate',()=>{popAt=Date.now();if(thOpen)thPopEvt();else if(cur)leave()});
 
 function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
 function reveal(el){
@@ -459,10 +473,8 @@ $('#reader').addEventListener('click',e=>{const cb=e.target.closest('.closeb');i
   const open=c.nextElementSibling.classList.contains('hide');setOpen(c,open);
   if(!open&&c.getBoundingClientRect().top<70)c.scrollIntoView({block:'start'})});
 /* tap paragraph -> add mark */
-let selEl=null;
-$('#reader').addEventListener('click',e=>{
-  const p=e.target.closest('.para');if(!p)return;
-  if(selEl)selEl.classList.remove('sel');selEl=p;p.classList.add('sel')});
+let selEl=null; /* בלחיצה על פסקה לא מסמנים אותה יותר; ★ שומר את הפסקה שבראש המסך */
+$('#bPrev').onclick=()=>navBack();
 $('#bTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 $('#bMark').onclick=()=>{
   const e=selEl||topPara();if(!e){return}
@@ -474,7 +486,7 @@ $('#bMark').onclick=()=>{
    <input type="text" id="mkLabel" value="${esc(ex>=0?S.marks[ex].label:part.he)}">
    <div class="row"><button class="btn grow" id="mkSave">שמירת סימנייה</button>
    ${ex>=0?'<button class="btn del" id="mkDel">מחיקה</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
-   <p style="color:var(--mut);font-size:13px">טיפ: לחיצה על פסקה מסמנת אותה, ואז ★ שומר בדיוק את המקום הזה. בלי סימון תישמר הפסקה שבראש המסך.</p>`;
+   <p style="color:var(--mut);font-size:13px">טיפ: ★ שומר את הפסקה שבראש המסך. כדי לשמור מקום אחר, מגללים אותו לראש המסך.</p>`;
   $('#ovMark').classList.add('on');
   $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
   $('#mkSave').onclick=()=>{const label=$('#mkLabel').value.trim()||part.he;
@@ -507,7 +519,7 @@ $('#bSet').onclick=()=>{
    <button class="btn ${S.theme==='light'?'':'sec'}" data-th="light">בהיר</button>
    <button class="btn ${S.theme==='dark'?'':'sec'}" data-th="dark">כהה</button></div>
   <h3 style="margin-top:18px">ניהול סימניות</h3>`;
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
+  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: ★ שומר את המקום שבראש המסך.</p>';
   S.marks.forEach((m,i)=>{const b=book(m.book);h+=`<div class="li"><span class="t">${esc(m.label)}<br><small style="color:var(--mut)">${esc(b?b.name:'')}</small></span>
     <button class="btn sec" data-up="${i}">↑</button><button class="btn sec" data-rn="${i}">✎</button><button class="btn del" data-rm="${i}">✕</button></div>`});
   h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
