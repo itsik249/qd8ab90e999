@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 6';
+const APP_VERSION='7.10.2026 · 7';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -467,7 +467,7 @@ function renderHome(){
     if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך איפה שהפסקת: '+book(la.id).name;act='data-resume="'+la.id+'"'}
     else if(la.t==='th'&&S.th&&S.th.cur){txt='המשך איפה שהפסקת: תהילים · מזמור '+heb(S.th.cur.seq[S.th.cur.i].c);act='data-th="homeresume"'}
     if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
-  const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','bentch','mayin','chatzot','tikkun','bed','nishmat','shira','moon','misc'];
+  const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','tikkun','bentch','mayin','bed','chatzot','nishmat','shira','moon','misc'];
   h+='<div class="grid">'+MAIN_ORDER.map(id=>id==='TH'?'<button class="card" data-th="open">'+IC.TH+'<b>תהילים</b></button>':(book(id)?`<button class="card" data-b="${id}">${IC[id]||''}<b>${esc(book(id).name)}</b></button>`:'')).join('')+'</div>';
   $('#home').innerHTML=h;histSync();
 }
@@ -476,7 +476,7 @@ $('#home').addEventListener('click',e=>{
   if(t.dataset.rsx){S.lastAct.dis=true;save();renderHome()}
   else if(t.dataset.th==='open')openTh();
   else if(t.dataset.th==='today')thToday();
-  else if(t.dataset.th==='homeresume'){T().inRead=true;openTh()}
+  else if(t.dataset.th==='homeresume'){T().inRead=true;openTh(true)}
   else if(t.dataset.resume){const l=S.last[t.dataset.resume];openBook(t.dataset.resume,l.k,l.para)}
   else if(t.dataset.m!==undefined)goMark(S.marks[+t.dataset.m]);
   else if(t.dataset.b)openBook(t.dataset.b,null,null,true);
@@ -653,7 +653,7 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
 });
 
 applyTheme();history.replaceState({lv:0},'');
-if(S.open==='th')openTh();else if(S.open&&book(S.open))openBook(S.open);else renderHome();
+if(S.open==='th')openTh(true);else if(S.open&&book(S.open))openBook(S.open);else renderHome();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>

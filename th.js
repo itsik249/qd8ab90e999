@@ -46,12 +46,12 @@ const ageCh=a=>(a%150)+1;
 const fmtBirth=b=>heb(b.d)+' ב'+MNAMES[b.k]+' '+heb(b.y%1000);
 
 /* ---- ניווט ---- */
-function openTh(){
+function openTh(resume){
   thOpen=true;S.open='th';save();thUI={open:null,sub:null,ctx:null};
   $('#home').classList.add('hide');$('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#tabbar').classList.add('hide');$('#th').classList.remove('hide');
   $('#ttl').textContent='תהילים';$('#bBack').classList.remove('hide');
   thStack=[{v:'menu'}];
-  if(T().inRead&&T().cur)thStack.push({v:'read'});
+  if(resume&&T().inRead&&T().cur)thStack.push({v:'read'});
   thRender();window.scrollTo(0,0)}
 function thNav(s){thStack.push(s);thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
@@ -94,7 +94,7 @@ function thPanel(){const t=T(),o=thUI.open,hd=hebToday();let h='';
   else if(o==='age'){const b=t.birth,a=curAge();
     h+='<p class="thn" style="margin-top:0">אפשר להקליד גיל כדי לפתוח את המזמור של השנה שאחריו.</p><div class="thq" style="margin-top:0"><input type="number" id="thAge" inputmode="numeric" min="0" max="149" placeholder="בן/בת כמה?"><button class="btn" id="thAgeGo">אישור</button></div>'+
       (b?'<div class="agebox"><b>לפי תאריך הלידה העברי שלך</b><p style="margin:6px 0 10px;color:var(--mut);font-size:14px">'+fmtBirth(b)+' · גיל '+a+'</p><div class="pbar" style="margin:0"><button class="btn" style="flex:1" id="thBirthOpen">פתיחת מזמור '+heb(ageCh(a))+'</button><button class="btn sec" id="thBirthEdit">שינוי</button><button class="btn sec" id="thBirthDel">הסרה</button></div></div>'
-        :'<button class="btn sec" id="thSetBirth" style="width:100%;margin-top:10px">🎂 הגדרת תאריך לידה עברי (עדכון אוטומטי בכל שנה)</button>')}
+        :'<button class="btn sec" id="thSetBirth" style="width:100%;margin-top:10px">🎂 הגדרת תאריך לידה עברי (מתעדכן אוטומטית כל שנה)</button>')}
   else if(o==='pers'){h+=(t.lists.length?t.lists.map(persRow).join(''):'<p class="thn" style="margin-top:0">עוד אין מזמורים אישיים. למשל: "לרפואה" עם המזמורים כ׳, כ״ג וקכ״א.</p>')+'<button class="btn" id="thNewList" style="width:100%;margin-top:6px">+ הוספת מזמורים אישיים</button>'}
   if(thUI.ctx&&thUI.sub&&(o==='books'||o==='week'||o==='month'))h+=chipsHTML(thUI.ctx);
   return '<div class="panel">'+h+'</div>'}
@@ -103,11 +103,12 @@ function thMenu(){
   const t=T(),total=Array.from({length:150},(_,i)=>i+1).filter(chRead).length;
   const opts=Array.from({length:150},(_,i)=>'<option value="'+(i+1)+'">מזמור '+heb(i+1)+(chRead(i+1)?' ✓':'')+'</option>').join('');
   let h='';
-  if(t.cur&&!t.resumeHide){h+='<div class="minires"><button data-th="resume">▶ המשך מהמקום האחרון: מזמור '+heb(t.cur.seq[t.cur.i].c)+'</button><button class="mx" data-th="resumeX" aria-label="סגירה">✕</button></div>'}
+  let resume='';
+  if(t.cur&&!t.resumeHide){resume+='<div class="minires" style="margin-top:14px"><button data-th="resume">▶ המשך מהמקום האחרון: מזמור '+heb(t.cur.seq[t.cur.i].c)+'</button><button class="mx" data-th="resumeX" aria-label="סגירה">✕</button></div>'}
   h+='<div class="thq"><input type="text" id="thIn" list="thDl" placeholder="חיפוש מזמורים מהיר" autocomplete="off"><button class="btn" id="thGo">פתיחה</button></div>'+
      '<select id="thSel"><option value="">בחירת מזמור מהרשימה…</option>'+opts+'</select>'+
      '<div class="thp"><div class="thpb"><i style="width:'+(total/150*100)+'%"></i></div><span>'+(total?'קראת '+hn(total)+' מתוך ק״נ':'עוד אין מזמורים מסומנים')+'</span>'+(total?'<button class="btn sec" id="thReset" style="padding:8px 12px;font-size:13px">איפוס</button>':'')+'</div>'+
-     '<div class="tiles">'+[['books','📖','ספרים'],['week','🗓️','ימי השבוע'],['month','🌙','יום בחודש'],['age','🎂','לפי גיל'],['pers','⭐','מזמורים אישיים']].map((x,i)=>'<button class="tile'+(i===4?' wide':'')+(thUI.open===x[0]?' on':'')+'" data-p="'+x[0]+'"><span class="ic">'+x[1]+'</span>'+x[2]+'</button>').join('')+'</div>'+thPanel();
+     '<div class="tiles">'+[['books','📖','ספרים'],['week','🗓️','ימי השבוע'],['month','🌙','יום בחודש'],['age','🎂','לפי גיל'],['pers','⭐','מזמורים אישיים']].map((x,i)=>'<button class="tile'+(i===4?' wide':'')+(thUI.open===x[0]?' on':'')+'" data-p="'+x[0]+'"><span class="ic">'+x[1]+'</span>'+x[2]+'</button>').join('')+'</div>'+thPanel()+resume;
   $('#th').innerHTML=h;
 }
 function thStartRead(items,i,label,opts){const t=T();t.cur={seq:items,i:i,label:label,noMark:!!(opts&&opts.noMark),noRead:!!(opts&&opts.noRead)};t.inRead=true;save();thNav({v:'read'})}
