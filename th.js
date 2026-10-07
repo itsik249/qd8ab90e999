@@ -98,7 +98,7 @@ function thMenu(){
      '<div class="tiles">'+[['books','📖','ספרים'],['week','🗓️','ימי השבוע'],['month','🌙','יום בחודש'],['age','🎂','לפי גיל'],['pers','⭐','מזמורים אישיים']].map((x,i)=>'<button class="tile'+(i===4?' wide':'')+(thUI.open===x[0]?' on':'')+'" data-p="'+x[0]+'"><span class="ic">'+x[1]+'</span>'+x[2]+'</button>').join('')+'</div>'+thPanel();
   $('#th').innerHTML=h;
 }
-function thStartRead(items,i,label,opts){const t=T();t.cur={seq:items,i:i,label:label,noMark:!!(opts&&opts.noMark)};t.inRead=true;save();thNav({v:'read'})}
+function thStartRead(items,i,label,opts){const t=T();t.cur={seq:items,i:i,label:label,noMark:!!(opts&&opts.noMark),noRead:!!(opts&&opts.noRead)};t.inRead=true;save();thNav({v:'read'})}
 
 /* ---- קורא ---- */
 function thRead(){
@@ -112,7 +112,7 @@ function thRead(){
     extra='<div class="agebox"><button class="btn" style="width:100%" id="thSaveAge">💾 שמירה במזמורים אישיים</button></div>'+
       (b?'<p class="thn" style="text-align:center">תאריך הלידה העברי שלך: '+fmtBirth(b)+'. המזמור מתעדכן אוטומטית בכל יום הולדת עברי.</p>'
         :(t.birthNo?'':'<div class="sugg"><b>🎂 עדכון אוטומטי בכל שנה?</b><p>אפשר להגדיר תאריך לידה עברי, ובכל יום הולדת עברי ייפתח המזמור של השנה החדשה, בלי צורך לחשב.</p><div class="pbar" style="margin:0"><button class="btn" style="flex:1" id="thSetBirth2">כן, להגדיר</button><button class="btn sec" id="thNoBirth">לא, תודה</button></div></div>'))}
-  const strip=cu.seq.length>1?'<div class="cs" id="thStrip">'+cu.seq.map((x,i)=>'<button class="cb'+(i===cu.i?' on':'')+(itRead(x)?' rd':'')+'" data-cj="'+i+'">'+itemLabel(x)+'</button>').join('')+'</div>':'';
+  const strip=cu.seq.length>1?'<div class="cs" id="thStrip">'+cu.seq.map((x,i)=>'<button class="cb'+(i===cu.i?' on':'')+(!cu.noRead&&itRead(x)?' rd':'')+'" data-cj="'+i+'">'+itemLabel(x)+'</button>').join('')+'</div>':'';
   $('#th').innerHTML=strip+'<div class="thr'+(cu.noMark?'':' mark')+'" style="font-size:'+S.font+'px"><div class="crumbrow"><button class="thcrumb" id="thCrumb">↩ חזרה</button></div><div class="tht">מזמור '+heb(c)+(it.f?' <small>פסוקים '+hebPlain(f)+'–'+heb(to)+'</small>':'')+'</div>'+
     '<div class="thctx">'+esc(cu.label||'')+(cu.seq.length>1?' · '+hn(cu.i+1)+' מתוך '+hn(cu.seq.length):'')+'</div>'+
     '<p class="thv">'+text+'</p><div class="pbar"><button class="btn sec" style="flex:1" id="thJump">☰ מזמור אחר</button></div>'+extra+'</div>';
@@ -122,6 +122,8 @@ function thRead(){
   if(!cu.noMark)thBarState();
 }
 function thBarState(){const cu=T().cur,it=cu.seq[cu.i],rd=!!T().read[keyOf(it)];
+  $('#thRd').classList.toggle('hide',!!cu.noRead);
+  $('#thNext').textContent=cu.noRead?(cu.i+1<cu.seq.length?'הבא ◂':'סיום ◂'):'קראתי והמשך ◂';
   $('#thRd').textContent=rd?'✓ נקרא (ביטול)':'✓ קראתי';$('#thRd').classList.toggle('on',rd);
   $('#thPrev').disabled=cu.i===0}
 function thMark(on){const cu=T().cur,k=keyOf(cu.seq[cu.i]);if(on)T().read[k]=Date.now();else delete T().read[k];save()}
@@ -139,7 +141,7 @@ function thGoCh(c,inSheet){
   if(!c){toast('לא נמצא מזמור כזה');return}
   if(inSheet)$('#ovTh').classList.remove('on');
   const items=range(1,150),top=thStack[thStack.length-1];
-  if(top.v==='read'){const t=T();t.cur={seq:items,i:c-1,label:'כל התהילים',noMark:false};save();thRead();window.scrollTo(0,0)}
+  if(top.v==='read'){const t=T();t.cur={seq:items,i:c-1,label:'כל התהילים',noMark:false,noRead:false};save();thRead();window.scrollTo(0,0)}
   else thStartRead(items,c-1,'כל התהילים')}
 
 /* ---- מזמורים אישיים ---- */
@@ -232,7 +234,7 @@ document.addEventListener('click',async e=>{
   if(id==='thSaveAge'){thSaveAge();return}
   if(id==='thNewList'){thEditList(-1);return}
   if(d.pl){const k=d.pl[0],i=+d.pl.slice(1),l=T().lists[i];
-    if(k==='r'){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items;thStartRead(its,0,l.n)}
+    if(k==='r'){const dyn=l.dyn&&T().birth,its=dyn?[{c:ageCh(curAge())}]:l.items;thStartRead(its,0,l.n,{noRead:true})}
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
@@ -240,7 +242,7 @@ document.addEventListener('click',async e=>{
   if(id==='thJump'){thJumpSheet();return}
   if(id==='thPrev'){const cu=T().cur;if(cu.i>0){cu.i--;save();thRead();window.scrollTo(0,0)}return}
   if(id==='thRd'){const cu=T().cur,k=keyOf(cu.seq[cu.i]),on=!T().read[k];thMark(on);thBarState();toast(on?'סומן: נקרא ✓':'הסימון בוטל');return}
-  if(id==='thNext'){const cu=T().cur,k=keyOf(cu.seq[cu.i]);if(!T().read[k])thMark(true);thNextItem();return}
+  if(id==='thNext'){const cu=T().cur,k=keyOf(cu.seq[cu.i]);if(!cu.noRead&&!T().read[k])thMark(true);thNextItem();return}
 });
 document.addEventListener('change',e=>{
   if(e.target.id==='thSel')thGoCh(+e.target.value||null);
