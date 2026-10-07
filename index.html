@@ -217,6 +217,12 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 #home .card b{flex:1}
 .dcard{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--sh)}
 .dcard .dt{flex:1;min-width:0;text-align:center}.dcard .dt b{display:block;font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:900;font-size:21px;color:var(--brown);line-height:1.2}
+.mkpill{display:block;margin:-4px auto 16px;padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--brown);font-size:13px;font-weight:700}
+.mrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.mrow .mgo{flex:1;min-width:0;background:none;border:0;padding:8px 4px;text-align:right;color:var(--fg)}
+.mrow .mgo b{display:block;font-size:16px}.mrow .mgo small{display:block;color:var(--mut);font-size:12.5px;margin-top:2px}
+.mrow .mic{flex:none;width:38px;height:38px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:15px;color:var(--mut);display:flex;align-items:center;justify-content:center}
+#toast .tu{margin-right:10px;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:999px;padding:5px 12px;font-weight:700;font-size:13px}
 .dcard .dt .gd{display:block;margin-top:3px;font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:700;font-size:21px;line-height:1.2;color:var(--brown);opacity:.85}
 .dcard .dgo{flex:none;border:0;border-radius:14px;padding:10px 12px;font-size:13px;font-weight:700;line-height:1.3;text-align:center;color:var(--on-acc);background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);box-shadow:var(--sh)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center;background:linear-gradient(180deg,var(--card),var(--card2));border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(40,35,20,.10)}
@@ -287,13 +293,22 @@ const IC={
   moon:SV('<path d="M17 15A7 7 0 018 6a7 7 0 109 9z"/><circle cx="18" cy="6" r=".8"/>'),
   misc:SV('<path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/>')
 };
-let popAt=0;
-/* חזרה: מנסה את היסטוריית הדפדפן, ואם לא קרה כלום (למשל אין רשומות) חוזר ידנית */
-function navBack(){const t0=Date.now();history.back();setTimeout(()=>{if(popAt<t0){if(thOpen)thPop();else if(cur)leave()}},450)}
-const histQ=[];let histHooked=false;
-function histPush(st){const ua=navigator.userActivation;
-  if(ua&&!ua.isActive){histQ.push(st);if(!histHooked){histHooked=true;const f=()=>{document.removeEventListener('click',f,true);document.removeEventListener('keydown',f,true);histHooked=false;while(histQ.length)history.pushState(histQ.shift(),'')};document.addEventListener('click',f,true);document.addEventListener('keydown',f,true)}}
-  else history.pushState(st,'')}
+/* היסטוריית דפדפן: כל רמת ניווט באפליקציה (בית=0, תפילה או עמוד תהילים=1, מזמור או קריאה רצופה=2) היא רשומה אחת בהיסטוריה.
+   histSync מיישר את ההיסטוריה למצב המסך, ו-popstate מיישר את המסך לרשומה שאליה חזרו (למשל בכפתור החזרה של הטלפון). */
+let hSilent=0,hLock=false,histHooked=false;
+const curLv=()=>(history.state&&history.state.lv)||0;
+function uiLevel(){if(typeof thOpen!=='undefined'&&thOpen)return thStack.length;return $('#reader').classList.contains('hide')?0:1}
+function histSync(){if(hLock)return;
+  const want=uiLevel(),have=curLv();
+  if(want>have){
+    const ua=navigator.userActivation;
+    if(ua&&!ua.isActive){/* רשומות שנוצרות בלי נגיעה בדפדפן מדלג עליהן בחזרה, לכן ממתינים לנגיעה הראשונה */
+      if(!histHooked){histHooked=true;const f=()=>{document.removeEventListener('click',f,true);document.removeEventListener('keydown',f,true);histHooked=false;histSync()};document.addEventListener('click',f,true);document.addEventListener('keydown',f,true)}
+      return}
+    for(let l=have+1;l<=want;l++)history.pushState({lv:l},'')
+  }else if(want<have){hSilent++;history.go(want-have);setTimeout(()=>{hSilent=0},800)}}
+/* חזרה אחת למעלה במסך (כמו כפתור החזרה של הטלפון) */
+function uiBack(){if(typeof thOpen!=='undefined'&&thOpen){if(thStack.length>1)thPop();else thLeave()}else if(cur)leave()}
 /* כפתור חזרה בכותרת: מוצג בכל עמוד פנימי, חוץ מדף הבית ומעמודי המזמורים (שם יש חזרה לרשימה) */
 function updateNav(){const home=!$('#home').classList.contains('hide');
   const top=(typeof thOpen!=='undefined'&&thOpen&&thStack.length)?thStack[thStack.length-1].v:null;
@@ -310,10 +325,16 @@ function openMenu(){
     it('about','<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11v5"/>','אודות');
   $('#ovMenu').classList.add('on')}
 function openMarks(){
-  let h='<h3>הסימניות שלי</h3>';
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
-  S.marks.forEach((m,i)=>{const b=book(m.book);h+='<div class="li" data-gm="'+i+'"><span class="t">★ '+esc(m.label)+'<br><small style="color:var(--mut)">'+esc(b?b.name:'')+'</small></span></div>'});
-  $('#shMarks').innerHTML=h;$('#ovMarks').classList.add('on')}
+  let x='<h3>הסימניות שלי</h3>';
+  if(!S.marks.length)x+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
+  S.marks.forEach((m,i)=>{const bk=book(m.book),pt=bk?partOf(bk,m.k):null;
+    x+='<div class="mrow"><button class="mgo" data-gm="'+i+'"><b>★ '+esc(m.label)+'</b><small>'+esc((bk?bk.name:'')+(pt?' · '+pt.he:''))+'</small></button><button class="mic" data-mke="'+i+'" aria-label="שינוי שם">✎</button><button class="mic" data-mkd="'+i+'" aria-label="מחיקה">✕</button></div>'});
+  $('#shMarks').innerHTML=x;$('#ovMarks').classList.add('on')}
+function renameMark(i){const m=S.marks[i];if(!m)return;
+  dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמירה'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();if($('#ovMarks').classList.contains('on'))openMarks()}})}
+function deleteMark(i){const m=S.marks[i];if(!m)return;S.marks.splice(i,1);save();paintMarks();
+  if($('#ovMarks').classList.contains('on'))openMarks();if(!$('#home').classList.contains('hide'))renderHome();
+  toastUndo('הסימנייה נמחקה',()=>{S.marks.splice(i,0,m);save();paintMarks();if($('#ovMarks').classList.contains('on'))openMarks();if(!$('#home').classList.contains('hide'))renderHome()})}
 function menuGo(act){closeMenu();
   const onHome=!$('#home').classList.contains('hide');
   if(act==='home'){if(!onHome)$('#bBack').click()}
@@ -328,6 +349,8 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#bMenu')){openMenu();return}
   const tb=e.target.closest('[data-tb]');if(tb){const k=tb.dataset.tb;
     if(k==='th')openTh();else if(k==='marks')openMarks();else if(k==='menu')openMenu();return}
+  const mke=e.target.closest('[data-mke]');if(mke){renameMark(+mke.dataset.mke);return}
+  const mkd=e.target.closest('[data-mkd]');if(mkd){deleteMark(+mkd.dataset.mkd);return}
   const gm=e.target.closest('[data-gm]');if(gm){$('#ovMarks').classList.remove('on');goMark(S.marks[+gm.dataset.gm]);return}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
@@ -348,6 +371,9 @@ function dlg(o){return new Promise(res=>{
   ov.onclick=e=>{if(e.target===ov)close(null)};
   const fi=box.querySelector('input,select');if(fi&&!o.noFocus)setTimeout(()=>fi.focus(),60);
 })}
+function toastUndo(msg,fn){const e=$('#toast');e.innerHTML=esc(msg)+'<button class="tu">ביטול</button>';e.style.display='block';e.style.pointerEvents='auto';clearTimeout(toast.t);
+  e.querySelector('.tu').onclick=()=>{fn();e.style.display='none';e.innerHTML=''};
+  toast.t=setTimeout(()=>{e.style.display='none';e.innerHTML=''},6000)}
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
 
 /* ---------- books ---------- */
@@ -391,25 +417,25 @@ function applyTheme(){document.documentElement.dataset.t=S.theme;document.docume
   const r=$('#reader');if(r)r.style.fontSize=S.font+'px'}
 
 /* ---------- home ---------- */
-function goMark(m){openBook(m.book,m.k,m.para)}
+function goMark(m){activeMark=m;openBook(m.book,m.k,m.para)}
 function renderHome(){
+  activeMark=null;
   $('#ttl').textContent='הסידור שלי';$('#bBack').classList.add('hide');
   $('#reader').classList.add('hide');$('#fab').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');$('#home').classList.remove('hide');
   $('#tabbar').classList.remove('hide');$('#bBack').classList.add('hide');updateNav();
   let h='';
   {const hd=hebToday(),py=hebParts(new Date()).y;let gr='';try{gr=new Intl.DateTimeFormat('he-IL',{day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch(e){gr=new Date().toLocaleDateString()}
-  h+='<div class="dcard"><div class="dt"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+' ה׳'+heb(py%1000)+'</b><span class="gd">'+esc(gr)+'</span></div></div>'}
+  h+='<div class="dcard"><div class="dt"><b>'+TH_WEEK[hd.wd][0]+', '+heb(hd.day)+(hd.mon?' ב'+esc(hd.mon):'')+' ה׳'+heb(py%1000)+'</b><span class="gd">'+esc(gr)+'</span></div></div>';
+    if(S.marks.length)h+='<button class="mkpill" data-tb="marks">★ הסימניות שלי</button>'}
   const la=S.lastAct;
   if(SHOW_RESUME&&la&&!la.dis){let txt='',act='';
     if(la.t==='b'&&book(la.id)&&S.last[la.id]){txt='המשך איפה שהפסקת: '+book(la.id).name;act='data-resume="'+la.id+'"'}
     else if(la.t==='th'&&S.th&&S.th.cur){txt='המשך איפה שהפסקת: תהילים · מזמור '+heb(S.th.cur.seq[S.th.cur.i].c);act='data-th="homeresume"'}
     if(txt)h+='<div class="rs"><button class="rsb" '+act+'>▶ '+esc(txt)+'</button><button class="rsx" data-rsx="1" aria-label="סגור">✕</button></div>'}
-  if(S.marks.length){h+='<h2 class="sec">הסימניות שלי</h2><div class="chips">'+
-    S.marks.map((m,i)=>`<button class="chip star" data-m="${i}">★ ${esc(m.label)}</button>`).join('')+'</div>'}
   const MAIN_ORDER=['bsh','shach','mincha','arvit','TH','bentch','mayin','chatzot','bed'];
   h+='<div class="grid">'+MAIN_ORDER.map(id=>id==='TH'?'<button class="card" data-th="open">'+IC.TH+'<b>תהילים</b></button>':(book(id)?`<button class="card" data-b="${id}">${IC[id]||''}<b>${esc(book(id).name)}</b></button>`:'')).join('')+'</div>';
   h+='<h2 class="sec">עוד</h2><div class="grid">'+BOOKS.filter(b=>b.more&&!MAIN_ORDER.includes(b.id)).map(b=>`<button class="card" data-b="${b.id}">${IC[b.id]||''}<b>${esc(b.name)}</b></button>`).join('')+'</div>';
-  $('#home').innerHTML=h;
+  $('#home').innerHTML=h;histSync();
 }
 $('#home').addEventListener('click',e=>{
   const t=e.target.closest('button,.p');if(!t)return;
@@ -448,7 +474,7 @@ function openBook(id,k,para,fresh){
   if(target){target.scrollIntoView({block:'start'});if(para!=null){target.classList.add('sel');setTimeout(()=>target.classList.remove('sel'),1800)}}
   else if(!k&&!fresh&&S.last[id]){const l=S.last[id],t=byId('q'+l.k+'_'+l.para);if(t){reveal(t);t.scrollIntoView({block:'start'})}}
   else window.scrollTo(0,0);
-  histPush({r:1});updateNav();
+  updateNav();histSync();
 }
 function paintMarks(){
   document.querySelectorAll('.para.mk').forEach(e=>e.classList.remove('mk'));
@@ -461,8 +487,11 @@ let st;window.addEventListener('scroll',()=>{if(!cur||$('#reader').classList.con
   st=setTimeout(()=>{const e=topPara();if(e){S.last[cur.id]={k:e.dataset.k,para:+e.dataset.i};save()}},300)},{passive:true});
 function leave(){cur=null;S.open=null;save();renderHome();window.scrollTo(0,0)}
 $('#bBack').onclick=()=>{if(thOpen){thHome();return}
-  if(history.state&&history.state.r)navBack();else leave()};
-window.addEventListener('popstate',()=>{popAt=Date.now();if(thOpen)thPopEvt();else if(cur)leave()});
+  if(cur)leave();else renderHome()};
+window.addEventListener('popstate',()=>{
+  if(hSilent>0){hSilent--;histSync();return}
+  const lv=curLv();hLock=true;
+  try{for(let g=0;g<4&&uiLevel()>lv;g++){if(thOpen){if(thStack.length>1)thPop();else thLeave()}else if(cur)leave();else break}}finally{hLock=false}});
 
 function setOpen(tog,open){tog.nextElementSibling.classList.toggle('hide',!open);tog.querySelector('.pl').textContent=open?'−':'＋'}
 function reveal(el){
@@ -477,25 +506,33 @@ let selEl=null;
 $('#reader').addEventListener('click',e=>{
   const p=e.target.closest('.para');if(!p)return;
   if(selEl)selEl.classList.remove('sel');selEl=p;p.classList.add('sel')});
-$('#bPrev').onclick=()=>navBack();
+$('#bPrev').onclick=()=>uiBack();
 $('#bTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+let activeMark=null; /* הסימנייה שממנה הגעת, מוצעת להזזה */
 $('#bMark').onclick=()=>{
   const e=selEl||topPara();if(!e){return}
   const b=book(cur.id),part=partOf(b,e.dataset.k);
   const ex=S.marks.findIndex(m=>m.book===cur.id&&m.k===e.dataset.k&&m.para==+e.dataset.i);
   const snippet=e.textContent.trim().slice(0,60);
-  $('#shMark').innerHTML=`<h3>סימנייה חדשה</h3>
+  const act=activeMark?S.marks.indexOf(activeMark):-1;
+  const opts='<option value="new">סימנייה חדשה</option>'+S.marks.map((m,i)=>{const bk=book(m.book);return '<option value="'+i+'"'+(i===act?' selected':'')+'>הזזת: '+esc(m.label)+(bk?' ('+esc(bk.name)+')':'')+'</option>'}).join('');
+  const startLabel=act>=0?S.marks[act].label:(ex>=0?S.marks[ex].label:part.he);
+  $('#shMark').innerHTML=`<h3>שמירת סימנייה</h3>
    <p style="color:var(--mut);margin:0 0 10px">${esc(part.he)} — ${esc(snippet)}…</p>
-   <input type="text" id="mkLabel" value="${esc(ex>=0?S.marks[ex].label:part.he)}">
-   <div class="row"><button class="btn grow" id="mkSave">שמירת סימנייה</button>
+   ${S.marks.length?'<label class="df"><span>שמירה כ:</span><select id="mkMode">'+opts+'</select></label>':''}
+   <input type="text" id="mkLabel" value="${esc(startLabel)}">
+   <div class="row"><button class="btn grow" id="mkSave">שמירה</button>
    ${ex>=0?'<button class="btn del" id="mkDel">מחיקה</button>':''}<button class="btn sec" id="mkX">ביטול</button></div>
    <p style="color:var(--mut);font-size:13px">טיפ: לחיצה על פסקה מסמנת אותה, ואז ★ שומר בדיוק את המקום הזה. בלי סימון תישמר הפסקה שבראש המסך.</p>`;
   $('#ovMark').classList.add('on');
+  if($('#mkMode'))$('#mkMode').onchange=()=>{const v=$('#mkMode').value;$('#mkLabel').value=v==='new'?(ex>=0?S.marks[ex].label:part.he):S.marks[+v].label};
   $('#mkX').onclick=()=>$('#ovMark').classList.remove('on');
-  $('#mkSave').onclick=()=>{const label=$('#mkLabel').value.trim()||part.he;
-    const m={book:cur.id,k:e.dataset.k,para:+e.dataset.i,label,sn:e.textContent.trim().slice(0,30)};
-    if(ex>=0)S.marks[ex]=m;else S.marks.push(m);save();paintMarks();$('#ovMark').classList.remove('on');toast('נשמר ★')};
-  if(ex>=0)$('#mkDel').onclick=()=>{S.marks.splice(ex,1);save();paintMarks();$('#ovMark').classList.remove('on')};
+  $('#mkSave').onclick=()=>{const mode=$('#mkMode')?$('#mkMode').value:'new',label=$('#mkLabel').value.trim()||part.he;
+    const base={book:cur.id,k:e.dataset.k,para:+e.dataset.i,sn:e.textContent.trim().slice(0,30)};
+    if(mode!=='new'){const i=+mode,old=S.marks[i];S.marks[i]=Object.assign({},base,{label});activeMark=S.marks[i];save();paintMarks();$('#ovMark').classList.remove('on');
+      toastUndo('הסימנייה הוזזה ★',()=>{S.marks[i]=old;activeMark=old;save();paintMarks()})}
+    else{const m=Object.assign({},base,{label});if(ex>=0)S.marks[ex]=m;else S.marks.push(m);activeMark=m;save();paintMarks();$('#ovMark').classList.remove('on');toast('נשמר ★')}};
+  if(ex>=0)$('#mkDel').onclick=()=>{$('#ovMark').classList.remove('on');deleteMark(ex)};
 };
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
 
@@ -521,10 +558,7 @@ $('#bSet').onclick=()=>{
    <button class="btn ${S.theme==='auto'?'':'sec'}" data-th="auto">אוטו</button>
    <button class="btn ${S.theme==='light'?'':'sec'}" data-th="light">בהיר</button>
    <button class="btn ${S.theme==='dark'?'':'sec'}" data-th="dark">כהה</button></div>
-  <h3 style="margin-top:18px">ניהול סימניות</h3>`;
-  if(!S.marks.length)h+='<p style="color:var(--mut)">אין עדיין סימניות. בתוך תפילה: לחיצה על פסקה ואז ★.</p>';
-  S.marks.forEach((m,i)=>{const b=book(m.book);h+=`<div class="li"><span class="t">${esc(m.label)}<br><small style="color:var(--mut)">${esc(b?b.name:'')}</small></span>
-    <button class="btn sec" data-up="${i}">↑</button><button class="btn sec" data-rn="${i}">✎</button><button class="btn del" data-rm="${i}">✕</button></div>`});
+  <h3 style="margin-top:18px">סימניות</h3><div class="row"><button class="btn sec grow" id="stMarks">ניהול הסימניות שלי</button></div>`;
   h+=`<h3 style="margin-top:18px">גיבוי</h3><div class="row"><button class="btn sec grow" id="exp">ייצוא</button><button class="btn sec grow" id="imp">ייבוא</button></div>
    <div class="row"><button class="btn grow" id="cl">סגירה</button></div>`;
   $('#shSet').innerHTML=h;$('#ovSet').classList.add('on')};
@@ -535,12 +569,13 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
   else if(t.dataset.rm!==undefined){S.marks.splice(+t.dataset.rm,1);save();re();paintMarks();if(!cur)renderHome()}
   else if(t.dataset.rn!==undefined){const m=S.marks[+t.dataset.rn];dlg({title:'שינוי שם סימנייה',fields:[{id:'n',label:'שם',value:m.label}],ok:'שמירה'}).then(v=>{if(v&&v.n.trim()){m.label=v.n.trim();save();re();if(!cur)renderHome()}})}
   else if(t.dataset.up!==undefined){const i=+t.dataset.up;if(i>0){[S.marks[i-1],S.marks[i]]=[S.marks[i],S.marks[i-1]];save();re();if(!cur)renderHome()}}
+  else if(t.id==='stMarks'){$('#ovSet').classList.remove('on');openMarks()}
   else if(t.id==='cl'){$('#ovSet').classList.remove('on');if(!cur)renderHome()}
   else if(t.id==='exp'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='siddur-backup.json';a.click()}
   else if(t.id==='imp'){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(x=>{try{S=Object.assign({},DEF,JSON.parse(x));save();location.reload()}catch(_){toast('קובץ לא תקין')}})};i.click()}
 });
 
-applyTheme();history.replaceState({h:1},'');
+applyTheme();history.replaceState({lv:0},'');
 if(S.open==='th')openTh();else if(S.open&&book(S.open))openBook(S.open);else renderHome();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

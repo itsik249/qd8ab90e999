@@ -11,8 +11,7 @@ function thBackBtn(show,low){const b=$('#thBackF');b.classList.toggle('hide',!sh
   const lbl='↩ חזרה לרשימת המזמורים';b.textContent=lbl;const cr=$('#thCrumb');if(cr)cr.textContent=lbl;
   const cu=T().cur;b.classList.toggle('low',!!low||!!(cu&&cu.noMark))}
 /* כפתור הבית בכותרת: יוצא מתהילים בבת אחת, בלי להשאיר היסטוריה */
-function thHome(){const n=thStack.length;if(n<1){thLeave();return}thGoingHome=true;history.go(-n);
-  setTimeout(()=>{if(thGoingHome){thGoingHome=false;thStack=[];T().inRead=false;save();thLeave()}},450)}
+function thHome(){thLeave()}
 function thPopEvt(){if(thGoingHome){thGoingHome=false;thStack=[];T().inRead=false;save();thLeave()}else thPop()}
 
 /* ---- אותיות ומספרים ---- */
@@ -53,14 +52,14 @@ function openTh(){
   $('#ttl').textContent='תהילים';$('#bBack').classList.remove('hide');
   thStack=[{v:'menu'}];
   if(T().inRead&&T().cur)thStack.push({v:'read'});
-  thStack.forEach(()=>histPush({th:1}));thRender();window.scrollTo(0,0)}
-function thNav(s){thStack.push(s);histPush({th:1});thRender();window.scrollTo(0,0)}
+  thRender();window.scrollTo(0,0)}
+function thNav(s){thStack.push(s);thRender();window.scrollTo(0,0)}
 function thPop(){const was=thStack.pop();if(was&&was.v==='read'){T().inRead=false;save()}
   if(!thStack.length){thLeave();return}thRender();window.scrollTo(0,0)}
 function thLeave(){thOpen=false;S.open=null;save();$('#thBackF').classList.add('hide');$('#th').classList.add('hide');$('#thbar').classList.add('hide');renderHome();window.scrollTo(0,0)}
 function thRender(){const s=thStack[thStack.length-1];
   thBackBtn(s.v==='read'||s.v==='cont',s.v==='cont');updateNav();
-  if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else if(s.v==='cont'){$('#thbar').classList.add('hide');thCont()}else thRead()}
+  if(s.v==='menu'){$('#thbar').classList.add('hide');thMenu()}else if(s.v==='cont'){$('#thbar').classList.add('hide');thCont()}else thRead();histSync()}
 
 function thToday(){openTh();const hd=hebToday(),it=monthItems(hd.day).concat(hd.short?monthItems(30):[]);thUI.open='month';setSub('mt',it,'התהילים של היום · יום '+heb(hd.day)+(hd.short?' ויום ל׳':'')+' בחודש');thMenu()}
 /* ---- עמוד ראשי של תהילים ---- */
@@ -131,7 +130,7 @@ function thBarState(){const cu=T().cur,it=cu.seq[cu.i],rd=!!T().read[keyOf(it)];
 function thMark(on){const cu=T().cur,k=keyOf(cu.seq[cu.i]);if(on)T().read[k]=Date.now();else delete T().read[k];save()}
 function thNextItem(){const cu=T().cur;
   if(cu.i+1<cu.seq.length){cu.i++;save();thRead();window.scrollTo(0,0)}
-  else{toast('סיימת! ✓');navBack()}}
+  else{toast('סיימת! ✓');uiBack()}}
 
 /* ---- קריאה רצופה של רשימה: כל המזמורים בעמוד אחד ---- */
 function thCont(){const s=thStack[thStack.length-1],items=s.items;
@@ -250,7 +249,7 @@ document.addEventListener('click',async e=>{
     else if(k==='e')thEditList(i);
     else if(k==='d'){const v=await dlg({title:'מחיקה',msg:'למחוק את "'+l.n+'"?',ok:'מחיקה',danger:true});if(v){T().lists.splice(i,1);save();thMenu()}}
     return}
-  if(id==='thBackF'||id==='thCrumb'){navBack();return}
+  if(id==='thBackF'||id==='thCrumb'){uiBack();return}
   if(id==='thJump'){thJumpSheet();return}
   if(id==='thPrev'){const cu=T().cur;if(cu.i>0){cu.i--;save();thRead();window.scrollTo(0,0)}return}
   if(id==='thRd'){const cu=T().cur,k=keyOf(cu.seq[cu.i]),on=!T().read[k];thMark(on);thBarState();toast(on?'סומן: נקרא ✓':'הסימון בוטל');return}
