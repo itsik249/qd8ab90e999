@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 8';
+const APP_VERSION='7.10.2026 · 9';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -520,17 +520,20 @@ function spNishmat(){
    '<p class="thn" style="text-align:center;margin:0 0 6px">בחירת נוסח</p>'+
    '<div class="segnus" role="tablist">'+vs.map(x=>'<button class="sn'+(x.id===nusSel?' on':'')+'" data-nus="'+x.id+'">'+esc(x.name)+'</button>').join('')+'</div>'+
    (v?v.paras.map((t,i)=>'<div class="para" id="qn_'+i+'" data-k="n.'+v.id+'" data-i="'+i+'">'+t+'</div>').join(''):'')}
+let shMode='all'; /* שירת הבריאה: all = הכול פתוח, ch = קריאה לפי פרק */
 function spShira(){
-  const E=window.EXTRA.shira;
+  const E=window.EXTRA.shira,ch=shMode==='ch';
   const tog=(t,id)=>'<div class="ph col lg" id="'+id+'"><span class="pl">＋</span> '+esc(t)+'</div><div class="pb hide">',cls='<button class="closeb">− סגירה</button></div>';
-  let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div><p class="thn" style="text-align:center;margin:0 0 6px">קריאה לפי פרק</p>';
-  E.chapters.forEach((ch,ci)=>{
-    x+=tog('פרק '+SP_HEB[ci]+'׳','shc'+ci);
-    ch.forEach(it=>{
+  const head=(t,id)=>ch?tog(t,id):'<div class="ph" id="'+id+'">'+esc(t)+'</div>',end=ch?cls:'';
+  let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div>'+
+   '<div class="segnus" role="tablist"><button class="sn'+(ch?'':' on')+'" data-shm="all">קריאה של הכול</button><button class="sn'+(ch?' on':'')+'" data-shm="ch">קריאה לפי פרק</button></div>';
+  E.chapters.forEach((c,ci)=>{
+    x+=head('פרק '+SP_HEB[ci]+'׳','shc'+ci);
+    c.forEach(it=>{
       if(!it.name){x+='<div class="para shnote"><small>'+esc(it.text)+'</small></div>';return}
       x+='<div class="shcard"><div class="shbody"><b class="shname">'+esc(it.name)+' <span class="shverb">'+esc(it.verb)+'</span></b><div class="shtxt">'+esc(it.text)+'</div></div></div>'});
-    x+=cls});
-  x+=tog(E.closing[0],'shcl')+E.closing.slice(1).map(t=>'<div class="para">'+esc(t)+'</div>').join('')+cls;
+    x+=end});
+  x+=head(E.closing[0],'shcl')+E.closing.slice(1).map(t=>'<div class="para">'+esc(t)+'</div>').join('')+end;
   return x}
 const TIKKUN=[16,32,41,42,59,77,90,105,137,150];
 function spTikkun(){
@@ -542,12 +545,14 @@ function spTikkun(){
 function openSpecial(b){
   const r=$('#reader');
   if(b.special==='nishmat'&&!cur.reopen)nusSel=null;
+  if(b.special==='shira'&&!cur.reopen)shMode='all';
   let x=b.special==='nishmat'?spNishmat():b.special==='shira'?spShira():spTikkun();
   if(b.special==='tikkun')x='<div class="cs" id="tkStrip">'+TIKKUN.map((c,i)=>'<button class="cb" data-tk="'+i+'">'+heb(c)+'</button>').join('')+'<button class="cb" data-tk="10">תפילה</button></div>'+x;
   r.innerHTML=x;r.dataset.sp=b.special;applyTheme();$('#fab').classList.add('hide');window.scrollTo(0,0);
   document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px');
   updateNav();histSync()}
 document.addEventListener('click',e=>{
+  const sm=e.target.closest('[data-shm]');if(sm){shMode=sm.dataset.shm;const b1=book(cur&&cur.id);if(b1&&b1.special==='shira'){const y=window.scrollY;cur.reopen=1;openSpecial(b1);delete cur.reopen;window.scrollTo(0,y)}return}
   const n=e.target.closest('[data-nus]');if(n&&!n.disabled){nusSel=n.dataset.nus;const bk0=cur;if(bk0)bk0.reopen=1;const b=book(cur&&cur.id);if(b&&b.special==='nishmat'){const y=window.scrollY;openSpecial(b);window.scrollTo(0,y)}if(bk0)delete bk0.reopen;return}
   const tk=e.target.closest('[data-tk]');if(tk){const el=document.getElementById('tk'+tk.dataset.tk);if(el)el.scrollIntoView({block:'start'})}
 });
@@ -652,8 +657,8 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
   else if(t.id==='imp'){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const f=i.files[0];if(!f)return;f.text().then(x=>{try{S=Object.assign({},DEF,JSON.parse(x));save();location.reload()}catch(_){toast('קובץ לא תקין')}})};i.click()}
 });
 
-applyTheme();history.replaceState({lv:0},'');
-if(S.open==='th')openTh(true);else if(S.open&&book(S.open))openBook(S.open);else renderHome();
+applyTheme();if(!(history.state&&history.state.lv))history.replaceState({lv:0},'');
+S.open=null;save();renderHome();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
