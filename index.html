@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='9.10.2026 · 13';
+const APP_VERSION='9.10.2026 · 14';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -430,10 +430,10 @@ BOOKS.forEach(b=>{
   (b.pre||[]).forEach(x=>{const [sn,pn]=x.split('|'),si=sec(sn),pi=D[si].parts.findIndex(q=>q.title===pn);
     b.parts.push({k:si+'.'+pi,he:D[si].parts[pi].he,grp:D[sec(b.secs[0])].he,si,pi})});
   b.secs.forEach(n=>{const si=sec(n);if(si<0)return;
-    D[si].parts.forEach((p,pi)=>b.parts.push({k:si+'.'+pi,he:p.he,grp:D[si].parts.length>1||b.secs.length>1?D[si].he:null,si,pi}))});
+    D[si].parts.forEach((p,pi)=>b.parts.push({k:si+'.'+pi,he:p.he,grp:D[si].title==='Adon Olam'?D[sec('Weekday Shacharit')].he:(D[si].parts.length>1||b.secs.length>1?D[si].he:null),si,pi}))});
 });
 /* קטעים שתמיד נפתחים סגורים: ח = כל החלק, פ = פסקה בודדת */
-const COLLAPSE_PARTS=['Weekday Shacharit|Petichat Eliyahu','Weekday Shacharit|Order of Talit','Weekday Shacharit|Order of Tefillin'];
+const COLLAPSE_PARTS=['Adon Olam|Adon Olam','Weekday Shacharit|Petichat Eliyahu','Weekday Shacharit|Order of Talit','Weekday Shacharit|Order of Tefillin'];
 const book=id=>BOOKS.find(b=>b.id===id);
 const partOf=(b,k)=>b.parts.find(p=>p.k===k);
 
