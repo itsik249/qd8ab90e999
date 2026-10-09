@@ -373,7 +373,7 @@ function menuGo(act){closeMenu();
   else if(act==='marks')openMarks();
   else if(act==='settings'||act==='backup')$('#bSet').click();
   else if(act==='about')dlg({title:'הסידור שלי',cancel:false,ok:'סגירה',
-    body:'<p class="dm">סידור עדות המזרח (שחרית, מנחה, ערבית, ברכת המזון, תיקון חצות ועוד) וספר תהילים, לשימוש אישי.</p><p class="dm" style="font-size:13px">גרסה: '+APP_VERSION+'</p><p class="dm">הנוסחים: ספריית Sefaria, סידור עדות המזרח (מהדורת שליחסבו), רישיון CC0. תהילים: Tanach with Nikkud, נחלת הכלל.</p>'})}
+    body:'<p class="dm">סידור עדות המזרח (שחרית, מנחה, ערבית, ברכת המזון, תיקון חצות ועוד) וספר תהילים, לשימוש אישי.</p><p class="dm" style="font-size:13px">גרסה: '+APP_VERSION+'</p><p class="dm">הנוסחים: ספריית Sefaria, סידור עדות המזרח (מהדורת שליחסבו), רישיון CC0. אדון עולם: Sefaria, סידור מצודה, רישיון CC-BY. תהילים: Tanach with Nikkud, נחלת הכלל.</p>'})}
 document.addEventListener('click',e=>{
   const mi=e.target.closest('[data-mi]');if(mi){menuGo(mi.dataset.mi);return}
   if(e.target.id==='ovMenu'){closeMenu();return}
@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='7.10.2026 · 12';
+const APP_VERSION='9.10.2026 · 13';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -412,7 +412,7 @@ function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';cl
 const sec=n=>D.findIndex(s=>s.title===n);
 const BOOKS=[
  {id:'bsh',name:'ברכות השחר',sub:'מודה אני, ברכות השחר, ברכות התורה',secs:['Preparatory Prayers']},
- {id:'shach',name:'תפילת שחרית',sub:'',secs:['Weekday Shacharit','Additions for Shacharit']},
+ {id:'shach',name:'תפילת שחרית',sub:'',secs:['Adon Olam','Weekday Shacharit','Additions for Shacharit']},
  {id:'bentch',name:'ברכת המזון',sub:'',secs:['Post Meal Blessing']},
  {id:'chatzot',name:'תיקון חצות',sub:'',secs:['The Midnight Rite'],more:0},
  {id:'mincha',name:'מנחה',sub:'',secs:['Weekday Mincha'],pre:['Weekday Shacharit|Petichat Eliyahu']},
