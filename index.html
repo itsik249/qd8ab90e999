@@ -267,7 +267,7 @@ header h1{text-align:center!important;font-family:'Frank Ruhl Libre',Georgia,ser
 .shic{display:none}.segnus{justify-content:center}.sn{max-width:220px}
 #reader[data-sp=tikkun] .tkc{margin:8px 0}
 .pli button{padding:9px 4px}.pli button[data-pl^="u"],.pli button[data-pl^="v"],.pli button[data-pl^="e"],.pli button[data-pl^="d"]{flex:0 0 38px;padding:9px 0}
-#homePop{position:fixed;left:50%;bottom:84px;transform:translate(-50%,24px);opacity:0;pointer-events:none;z-index:40;padding:13px 24px;border-radius:999px;border:0;font-size:16px;font-weight:700;color:var(--on-acc);background:linear-gradient(135deg,var(--acc3) 0%,var(--acc) 50%,var(--accd) 100%);box-shadow:0 8px 22px rgba(0,0,0,.28);transition:opacity .3s,transform .3s}
+#homePop{position:fixed;left:50%;bottom:84px;transform:translate(-50%,24px);opacity:0;pointer-events:none;z-index:40;padding:13px 24px;border-radius:999px;border:0;font-size:16px;font-weight:700;background:linear-gradient(135deg,#ff9a3c,#e8590c);color:#fff;box-shadow:0 8px 22px rgba(232,89,12,.45);transition:opacity .3s,transform .3s}
 #homePop.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 </style>
 </head>
@@ -388,7 +388,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='10.10.2026 · 16';
+const APP_VERSION='10.10.2026 · 17';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -662,10 +662,11 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
 applyTheme();if(!(history.state&&history.state.lv))history.replaceState({lv:0},'');
 if(S.open==='th')openTh(true);else if(S.open&&book(S.open))openBook(S.open);else renderHome(); /* חוזרים למקום שבו יצאנו */
 /* אחרי פתיחה מחדש במקום שאינו הבית: כפתור צף לחזרה לתפריט הראשי (הנגיעה בו גם מאפשרת לכפתור החזרה של הטלפון לעבוד) */
-if(S.open){const hp=document.createElement('button');hp.id='homePop';hp.innerHTML='⌂ לתפריט הראשי';document.body.appendChild(hp);
-  const gone=()=>{clearTimeout(hp.t);hp.classList.remove('on');setTimeout(()=>hp.remove(),300)};
+if(S.open){const hp=document.createElement('button');hp.id='homePop';hp.innerHTML='⌂ חזרה לדף הבית';document.body.appendChild(hp);
+  const gone=()=>{clearTimeout(hp.t);document.removeEventListener('click',away,true);hp.classList.remove('on');setTimeout(()=>hp.remove(),300)};
+  const away=e=>{if(e.target!==hp)gone()}; /* נגיעה בכל מקום אחר במסך מסתירה את הכפתור */
   hp.onclick=()=>{gone();if(typeof thOpen!=='undefined'&&thOpen)thLeave();else if(cur)leave()};
-  setTimeout(()=>hp.classList.add('on'),400);hp.t=setTimeout(gone,12000)}
+  setTimeout(()=>{hp.classList.add('on');document.addEventListener('click',away,true)},400);hp.t=setTimeout(gone,15000)}
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
