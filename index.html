@@ -386,7 +386,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='9.10.2026 · 14';
+const APP_VERSION='10.10.2026 · 15';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -658,7 +658,7 @@ $('#shSet').addEventListener('click',e=>{const t=e.target.closest('button');if(!
 });
 
 applyTheme();if(!(history.state&&history.state.lv))history.replaceState({lv:0},'');
-S.open=null;save();renderHome(); /* אחרי סגירה ופתיחה מחדש תמיד מתחילים בדף הבית */
+if(S.open==='th')openTh(true);else if(S.open&&book(S.open))openBook(S.open);else renderHome(); /* חוזרים למקום שבו יצאנו */
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
