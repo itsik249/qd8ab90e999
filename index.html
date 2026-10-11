@@ -388,7 +388,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu()}});
 /* מתג: תג "המשך איפה שהפסקת" בדף הבית. כבוי לבקשת יצחק. ראה PROJECT.md */
-const APP_VERSION='11.10.2026 · 18';
+const APP_VERSION='11.10.2026 · 19';
 const SHOW_RESUME=false;
 function dlg(o){return new Promise(res=>{
   const ov=$('#ovDlg'),box=$('#dlgBox');
@@ -528,7 +528,7 @@ function spShira(){
   const tog=(t,id)=>'<div class="ph col lg" id="'+id+'"><span class="pl">＋</span> '+esc(t)+'</div><div class="pb hide">',cls='<button class="closeb">− סגירה</button></div>';
   const head=(t,id)=>ch?tog(t,id):'<div class="ph" id="'+id+'">'+esc(t)+'</div>',end=ch?cls:'';
   let x='<div class="grp"><span class="st">✦</span>שירת הבריאה<span class="st">✦</span></div>'+
-   E.intro.map(t=>'<div class="para shintro">'+esc(t)+'</div>').join('')+
+   tog('הקדמה','shintro')+E.intro.map(t=>'<div class="para shintro">'+esc(t)+'</div>').join('')+cls+
    '<div class="segnus" role="tablist"><button class="sn'+(ch?'':' on')+'" data-shm="all">קריאה של הכול</button><button class="sn'+(ch?' on':'')+'" data-shm="ch">קריאה לפי פרק</button></div>';
   E.chapters.forEach((c,ci)=>{
     x+=head('פרק '+SP_HEB[ci]+'׳','shc'+ci);
